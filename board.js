@@ -65,7 +65,7 @@ async function boardPage(){
     const preview=x.content.length>18?`${x.content.slice(0,18)}…`:x.content;
     return `<button class="sticky-note ${stickyColorClass(x.player_id)} sticky-tilt-${i%5}" data-board-post="${x.id}" type="button"><time>${boardDate(x.created_at)}</time><p>${esc(preview)}</p></button>`;
   }).join(''):`<div class="chalk-empty">아직 칠판이 비어 있어.<br>첫 포스트잇을 붙여봐!</div>`;
-  $('#app').innerHTML=shell(`<button id="board-back" class="text-back">‹ HOME으로</button><section class="chalk-frame"><div class="chalkboard"><div class="chalk-heading"><span>MOOMOO CLUB</span><h2>우리의 칠판</h2><b>${posts.length}개의 이야기</b></div><div class="chalk-notes sticky-grid">${notes}</div><div class="chalk-tray"><i></i><i></i><i></i></div></div></section><section class="board-compose-card"><div><span class="mission-kicker">FREE NOTE</span><h3>포스트잇 붙이기</h3></div><textarea id="board-free-text" maxlength="300" placeholder="무무클럽 칠판에 자유롭게 남겨봐."></textarea><button id="board-free-post" class="primary" type="button">포스트잇 붙이기</button></section>`);
+  $('#app').innerHTML=shell(`<button id="board-back" class="text-back">‹ HOME으로</button><section class="chalk-frame"><div class="chalkboard"><div class="chalk-heading"><h2>무무클럽 칠판</h2></div><div class="chalk-notes sticky-grid">${notes}</div><div class="chalk-tray"><i></i><i></i><i></i></div></div></section><section class="board-compose-card"><div><span class="mission-kicker">FREE NOTE</span><h3>포스트잇 붙이기</h3></div><textarea id="board-free-text" maxlength="300" placeholder="무무클럽 칠판에 자유롭게 남겨봐."></textarea><button id="board-free-post" class="primary" type="button">포스트잇 붙이기</button></section>`);
   const main=document.querySelector('main');if(main)main.classList.add('board-page');
   bindNav();
   $('#board-back').onclick=home;
