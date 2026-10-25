@@ -19,10 +19,8 @@ render=function(page='home'){
 
 async function mailboxPage(){
   let box={total:0,mine:[]};
-  let messages=[];
   try{box=await loadMailboxCounts()}catch(e){console.warn(e)}
-  try{messages=await loadSecretMessages()}catch(e){console.warn(e)}
-  $('#app').innerHTML=shell(`${mailboxSummaryHtml(box.total)}${freeSendHtml()}${secretInboxHtml(messages)}${mailboxMineHtml(box.mine)}`);
+  $('#app').innerHTML=shell(`${mailboxSummaryHtml(box.total)}${freeSendHtml()}${mailboxMineHtml(box.mine)}`);
   const main=document.querySelector('main');
   if(main)main.classList.add('mailbox-page');
   const compose=document.querySelector('#free-send-text')?.closest('.card');
@@ -67,10 +65,13 @@ home=async function(){
   }
 };
 
-// ME는 프로필/로그아웃 전용으로 유지한다. 메시지함과 우체통 기록은 MAIL 탭에서 본다.
+// ME에서는 프로필/로그아웃 + 받은 익명 메시지함을 유지하고, 나의 우체통 기록만 MAIL 탭으로 옮긴다.
 const mailboxTabMe=me;
 me=async function(){
   await mailboxTabMe();
   const cards=[...document.querySelectorAll('main .card')];
-  cards.slice(1).forEach(card=>card.remove());
+  const compose=cards.find(card=>card.querySelector('#free-send-text'));
+  if(compose)compose.remove();
+  const mailboxCard=cards.find(card=>card.textContent.includes('나의 우체통')||card.textContent.includes('SEALED MAILBOX'));
+  if(mailboxCard)mailboxCard.remove();
 };
