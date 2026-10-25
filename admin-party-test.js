@@ -1,5 +1,4 @@
 // Admin tools for inspecting the sealed mailbox and rehearsing party-day reveal flows.
-let adminPartyRehearsal=false;
 
 async function adminLoadMailboxLetters(){
   const r=await fetch(`${SUPABASE_URL}/rest/v1/mailbox_letters?select=*&order=created_at.asc`,{headers:apiHeaders});
@@ -32,7 +31,10 @@ function adminMailbox(){
 
 async function adminPartyRehearsalPage(){
   let letters=[],messages=[];
-  try{[letters,messages]=await Promise.all([adminLoadMailboxLetters(),adminLoadSecretMessages(),loadGame()])}catch(e){console.warn(e)}
+  try{
+    [letters,messages]=await Promise.all([adminLoadMailboxLetters(),adminLoadSecretMessages()]);
+    await loadGame();
+  }catch(e){console.warn(e)}
   const assignments=state.assignments||{};
   const mapping=PEOPLE.map(p=>{
     const receiver=person(assignments[p.id]);
@@ -50,15 +52,3 @@ async function adminPartyRehearsalPage(){
   $('#party-test-back').onclick=admin;
   $('#party-test-exit').onclick=admin;
 }
-
-const adminBeforePartyTools=admin;
-admin=function(){
-  adminBeforePartyTools();
-  const card=document.querySelector('.card.admin');
-  const reset=document.querySelector('#reset');
-  if(!card||!reset)return;
-  const tools=`<div class="admin-party-tools"><h3>파티 점검</h3><button id="admin-mailbox-open" class="secondary" type="button">우체통 확인</button><button id="admin-party-rehearsal" class="secondary" type="button">파티 당일 예행연습</button><p class="small muted">예행연습은 실제 파티 날짜·추첨·편지·메시지 데이터를 변경하지 않아.</p></div>`;
-  reset.insertAdjacentHTML('beforebegin',tools);
-  $('#admin-mailbox-open').onclick=adminMailbox;
-  $('#admin-party-rehearsal').onclick=adminPartyRehearsalPage;
-};
