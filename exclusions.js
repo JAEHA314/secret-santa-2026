@@ -23,7 +23,6 @@ function isAssignmentExcluded(giverId,receiverId){
   return assignmentExclusions.some(x=>x.giver_id===giverId&&x.receiver_id===receiverId);
 }
 
-// 본인 배정 + 관리자가 지정한 관계를 모두 피하는 완전 매칭을 찾는다.
 derange=function(){
   const ids=PEOPLE.map(p=>p.id);
   for(let attempt=0;attempt<10000;attempt++){
@@ -35,7 +34,6 @@ derange=function(){
   throw new Error('조건을 모두 만족하는 마니또 조합이 없어. 제외 관계를 줄여줘.');
 };
 
-// 어느 멤버가 첫 추첨을 눌러도 최신 제외 관계를 먼저 읽고 추첨한다.
 const exclusionsBaseCreateAssignmentsIfNeeded=createAssignmentsIfNeeded;
 createAssignmentsIfNeeded=async function(){
   await loadGame();
@@ -76,4 +74,14 @@ admin=function(){
     const [g,r]=b.dataset.removeExclusion.split('|');
     try{await removeAssignmentExclusion(g,r);admin()}catch(e){alert('제외 관계를 삭제하지 못했어.')}
   });
+
+  const reset=document.querySelector('#reset');
+  if(reset&&typeof adminMailbox==='function'&&typeof adminPartyRehearsalPage==='function'){
+    const tools=document.createElement('div');
+    tools.className='admin-party-tools';
+    tools.innerHTML='<h3>파티 점검</h3><button id="admin-mailbox-open" class="secondary" type="button">우체통 확인</button><button id="admin-party-rehearsal" class="secondary" type="button">파티 당일 예행연습</button><p class="small muted">실제 게임 데이터는 변경하지 않아.</p>';
+    reset.insertAdjacentElement('beforebegin',tools);
+    $('#admin-mailbox-open').onclick=adminMailbox;
+    $('#admin-party-rehearsal').onclick=adminPartyRehearsalPage;
+  }
 };
