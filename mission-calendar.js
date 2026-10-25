@@ -31,7 +31,7 @@ function calendarHtml(rows,year,month){
 function openMissionDay(key,rows){
   const items=rows.filter(x=>x.status==='completed'&&calendarDateKey(x.completed_at)===key);
   if(!items.length)return;
-  const [y,m,d]=key.split('-');
+  const [,m,d]=key.split('-');
   const modal=document.createElement('div');
   modal.className='mission-day-modal';
   modal.innerHTML=`<div class="mission-day-backdrop" data-mission-day-close></div><section class="mission-day-sheet"><button class="mission-day-close" type="button" data-mission-day-close>×</button><span class="mission-kicker">MISSION DIARY</span><h2>${Number(m)}월 ${Number(d)}일</h2><div class="mission-day-list">${items.map(row=>{const mission=calendarMissionInfo(row.mission_id);const note=(row.note||'').trim();return `<article><b>${esc(mission.title)}</b>${note?`<p>${esc(note).replace(/\n/g,'<br>')}</p>`:'<p class="muted">완료한 미션</p>'}</article>`}).join('')}</div></section>`;
@@ -42,16 +42,22 @@ function openMissionDay(key,rows){
 const missionCalendarBaseMe=me;
 me=async function(){
   await missionCalendarBaseMe();
-  let rows=[];try{rows=await loadMissions()}catch(e){console.warn(e)}
+  let rows=[];
+  try{rows=await loadMissions(state.user)}catch(e){console.warn('mission calendar load',e)}
   const completed=rows.filter(x=>x.status==='completed'&&x.completed_at);
   const latest=completed.length?new Date(Math.max(...completed.map(x=>new Date(x.completed_at).getTime()))):new Date();
   let year=latest.getFullYear(),month=latest.getMonth();
-  const profile=document.querySelector('.personal-page .card');
-  const inbox=profile&&profile.nextElementSibling;
-  if(!profile)return;
+
+  // Insert directly after the profile card. Do not depend on wrapper classes,
+  // because the personal page is assembled by several feature overrides.
+  const main=document.querySelector('#app main');
+  const profile=main&&main.querySelector(':scope > section.card');
+  if(!main||!profile)return;
+  const old=document.querySelector('#mission-calendar-holder');
+  if(old)old.remove();
   const holder=document.createElement('div');
   holder.id='mission-calendar-holder';
-  if(inbox)inbox.before(holder);else profile.after(holder);
+  profile.insertAdjacentElement('afterend',holder);
 
   const renderCalendar=()=>{
     holder.innerHTML=calendarHtml(rows,year,month);
