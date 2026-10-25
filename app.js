@@ -1,10 +1,10 @@
 const PEOPLE=[
-{id:'bear',name:'북극곰',face:'🐻‍❄️'},
-{id:'dog',name:'강아지',face:'🐶'},
-{id:'frog',name:'개구리',face:'🐸'},
-{id:'cat',name:'고양이',face:'🐱'},
-{id:'rabbit',name:'토끼',face:'🐰'},
-{id:'glasses',name:'안경이',face:'🤓'}];
+{id:'bear',name:'곰아',face:'🐻‍❄️'},
+{id:'dog',name:'왈왈이',face:'🐶'},
+{id:'frog',name:'고굴맨',face:'🐸'},
+{id:'cat',name:'하묘',face:'🐱'},
+{id:'rabbit',name:'쿠끼',face:'🐰'},
+{id:'glasses',name:'민디비',face:'🤓'}];
 const KEY='ss26-state';
 const defaultState={user:null,pins:{},dDay:'2026-12-31',giftLimit:30000,assignments:null,drawnBy:{},progress:0,ornaments:0};
 let state=Object.assign({},defaultState,JSON.parse(localStorage.getItem(KEY)||'{}'));
@@ -28,12 +28,5 @@ function secret(){const hasDrawn=!!state.drawnBy[state.user];let body;if(!hasDra
 function me(){let u=person(state.user);$('#app').innerHTML=shell(`<section class="card"><div class="reveal">${u.face}</div><h2 style="text-align:center">${u.name}</h2><button id="logout" class="secondary">로그아웃</button></section><section class="card"><h3>게임 설정</h3><label>연말 파티 날짜</label><input id="date" class="field" type="date" value="${state.dDay}"><label>선물 최대 금액</label><input id="price" class="field" type="number" value="${state.giftLimit}"><button id="settings" class="primary">설정 저장</button></section>`);bindNav();$('#logout').onclick=()=>{state.user=null;selected=null;adminSequence=[];save();render()};$('#settings').onclick=()=>{if(!confirm('모두에게 보이는 게임 설정을 바꿀까?'))return;state.dDay=$('#date').value;state.giftLimit=Math.max(0,Number($('#price').value)||0);save();alert('저장했어!');render('me')}}
 function adminLogin(){let pin=prompt('ADMIN PIN');if(pin!=='0922')return alert('관리자 PIN이 아니야.');admin()}
 function cover(value,label){return `<button class="secret-cover" type="button" data-secret="${esc(value)}" aria-label="${esc(label)} 보기"><span class="cover-block"></span><span class="secret-value">${esc(value)}</span></button>`}
-function admin(){
-  let rows=state.assignments?PEOPLE.map(p=>{const target=person(state.assignments[p.id]);return `<div class="admin-row"><div class="admin-main"><span>${p.face} ${p.name}</span><span>→</span>${cover(`${target.face} ${target.name}`,`${p.name}의 마니또`)}</div><div class="admin-meta"><span>PIN</span>${cover(state.pins[p.id]||'미설정',`${p.name} PIN`)}<span class="draw-status">${state.drawnBy[p.id]?'확인 완료':'아직 뽑기 전'}</span></div></div>`}).join(''):PEOPLE.map(p=>`<div class="admin-row"><div class="admin-main"><span>${p.face} ${p.name}</span><span>→ 아직 추첨 전</span></div><div class="admin-meta"><span>PIN</span>${cover(state.pins[p.id]||'미설정',`${p.name} PIN`)}</div></div>`).join('');
-  $('#app').innerHTML=shell(`<section class="card admin"><h2>ADMIN</h2><p class="muted">가려진 칸을 눌러 필요한 정보만 확인할 수 있어.</p><div class="admin-list">${rows}</div><button id="redraw" class="danger">전체 재추첨</button><button id="reset" class="danger">추첨 초기화</button><button id="back" class="secondary">로그인 화면으로</button></section>`,false);
-  document.querySelectorAll('.secret-cover').forEach(b=>b.onclick=()=>b.classList.toggle('revealed'));
-  $('#redraw').onclick=()=>{if(confirm('전체 관계를 새로 뽑을까? 모두에게 뽑기 화면이 다시 열려.')){state.assignments=derange();state.drawnBy={};save();admin()}};
-  $('#reset').onclick=()=>{if(confirm('추첨 결과를 완전히 지울까?')){state.assignments=null;state.drawnBy={};save();admin()}};
-  $('#back').onclick=()=>login();
-}
+function admin(){let rows=state.assignments?PEOPLE.map(p=>{const target=person(state.assignments[p.id]);return `<div class="admin-row"><div class="admin-main"><span>${p.face} ${p.name}</span><span>→</span>${cover(`${target.face} ${target.name}`,`${p.name}의 마니또`)}</div><div class="admin-meta"><span>PIN</span>${cover(state.pins[p.id]||'미설정',`${p.name} PIN`)}<span class="draw-status">${state.drawnBy[p.id]?'확인 완료':'아직 뽑기 전'}</span></div></div>`}).join(''):PEOPLE.map(p=>`<div class="admin-row"><div class="admin-main"><span>${p.face} ${p.name}</span><span>→ 아직 추첨 전</span></div><div class="admin-meta"><span>PIN</span>${cover(state.pins[p.id]||'미설정',`${p.name} PIN`)}</div></div>`).join('');$('#app').innerHTML=shell(`<section class="card admin"><h2>ADMIN</h2><p class="muted">가려진 칸을 눌러 필요한 정보만 확인할 수 있어.</p><div class="admin-list">${rows}</div><button id="redraw" class="danger">전체 재추첨</button><button id="reset" class="danger">추첨 초기화</button><button id="back" class="secondary">로그인 화면으로</button></section>`,false);document.querySelectorAll('.secret-cover').forEach(b=>b.onclick=()=>b.classList.toggle('revealed'));$('#redraw').onclick=()=>{if(confirm('전체 관계를 새로 뽑을까? 모두에게 뽑기 화면이 다시 열려.')){state.assignments=derange();state.drawnBy={};save();admin()}};$('#reset').onclick=()=>{if(confirm('추첨 결과를 완전히 지울까?')){state.assignments=null;state.drawnBy={};save();admin()}};$('#back').onclick=()=>login()}
 render();
