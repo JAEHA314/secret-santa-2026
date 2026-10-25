@@ -13,6 +13,11 @@ async function createBoardPost(content,missionId=null){
   if(!r.ok)throw new Error('board post');
 }
 
+async function deleteFreeBoardPost(id){
+  const r=await fetch(`${SUPABASE_URL}/rest/v1/board_posts?id=eq.${encodeURIComponent(id)}&player_id=eq.${encodeURIComponent(state.user)}&mission_id=is.null`,{method:'DELETE',headers:apiHeaders});
+  if(!r.ok)throw new Error('board delete');
+}
+
 function boardMissionTitle(id){
   if(id==null)return '자유롭게 남긴 이야기';
   const m=MISSIONS.find(x=>x.id===Number(id));
@@ -28,9 +33,10 @@ async function boardPage(){
   try{posts=await loadBoardPosts()}catch(e){console.warn(e)}
   const notes=posts.length?posts.map(x=>{
     const p=person(x.player_id);
-    return `<article class="chalk-note"><div class="chalk-author">${p?visual(p,'board-avatar'):''}<span>${p?esc(p.name):'무무클럽'}</span></div><small>${esc(boardMissionTitle(x.mission_id))}</small><p>${esc(x.content).replace(/\n/g,'<br>')}</p></article>`;
+    const canDelete=x.mission_id==null&&x.player_id===state.user;
+    return `<article class="chalk-note"><div class="chalk-author">${p?visual(p,'board-avatar'):''}<span>${p?esc(p.name):'무무클럽'}</span>${canDelete?`<button class="chalk-delete" data-board-delete="${x.id}" type="button" aria-label="글 삭제">×</button>`:''}</div><small>${esc(boardMissionTitle(x.mission_id))}</small><p>${esc(x.content).replace(/\n/g,'<br>')}</p></article>`;
   }).join(''):`<div class="chalk-empty">아직 칠판이 비어 있어.<br>첫 이야기를 남겨봐!</div>`;
-  $('#app').innerHTML=shell(`<button id="board-back" class="text-back">‹ HOME으로</button><section class="chalk-frame"><div class="chalkboard"><div class="chalk-heading"><span>MOOMOO CLUB</span><h2>우리의 칠판</h2><b>${posts.length}개의 이야기</b></div><div class="chalk-compose"><textarea id="board-free-text" maxlength="300" placeholder="무무클럽 칠판에 자유롭게 남겨봐."></textarea><button id="board-free-post" type="button">분필로 적기</button></div><div class="chalk-notes">${notes}</div><div class="chalk-tray"><i></i><i></i><i></i></div></div></section>`);
+  $('#app').innerHTML=shell(`<button id="board-back" class="text-back">‹ HOME으로</button><section class="chalk-frame"><div class="chalkboard"><div class="chalk-heading"><span>MOOMOO CLUB</span><h2>우리의 칠판</h2><b>${posts.length}개의 이야기</b></div><div class="chalk-notes">${notes}</div><div class="chalk-tray"><i></i><i></i><i></i></div></div></section><section class="board-compose-card"><div><span class="mission-kicker">FREE NOTE</span><h3>칠판에 한마디</h3></div><textarea id="board-free-text" maxlength="300" placeholder="무무클럽 칠판에 자유롭게 남겨봐."></textarea><button id="board-free-post" class="primary" type="button">분필로 적기</button></section>`);
   const main=document.querySelector('main');if(main)main.classList.add('board-page');
   bindNav();
   $('#board-back').onclick=home;
@@ -40,6 +46,11 @@ async function boardPage(){
     const button=$('#board-free-post');button.disabled=true;
     try{await createBoardPost(text,null);await boardPage()}catch(e){button.disabled=false;alert('칠판에 올리지 못했어. 다시 시도해줘.')}
   };
+  document.querySelectorAll('[data-board-delete]').forEach(button=>button.onclick=async()=>{
+    if(!confirm('이 자유 글을 칠판에서 지울까?'))return;
+    button.disabled=true;
+    try{await deleteFreeBoardPost(button.dataset.boardDelete);await boardPage()}catch(e){button.disabled=false;alert('글을 삭제하지 못했어. 다시 시도해줘.')}
+  });
 }
 
 // HOME에 칠판 입구를 추가한다.
