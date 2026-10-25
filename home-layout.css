@@ -4,8 +4,8 @@
 .shell .shared-header .brand{width:auto;max-width:none;margin:0;text-align:left;min-width:0}
 .shell .brand .club-name{margin:0 0 0 2px;font-size:12px;line-height:1.05}
 .shell .brand h1{margin:1px 0 0;font-size:27px;line-height:1.02}
-.shell .shared-profile-link{border:0;background:transparent;padding:0;margin:13px 0 0;display:flex;align-items:center;gap:7px;flex:0 0 auto;font:inherit;color:inherit;cursor:pointer}
-.shell .shared-greeting{display:flex;align-items:baseline;gap:4px;white-space:nowrap}
+.shell .shared-profile-link{border:0;background:transparent;padding:0;margin:8px 0 0;display:flex;align-items:flex-end;gap:7px;flex:0 0 auto;font:inherit;color:inherit;cursor:pointer}
+.shell .shared-greeting{display:flex;align-items:baseline;gap:4px;white-space:nowrap;margin-bottom:2px}
 .shell .shared-greeting small{font-size:12px}
 .shell .shared-greeting b{font-size:18px;line-height:1.1}
 .shell .shared-avatar{display:block;line-height:0}
@@ -14,10 +14,13 @@
 /* The old HOME greeting is replaced by the shared header. */
 .home-layout.shell>.top{display:none}
 
+/* Personal page already shows the member prominently, so don't repeat it in the header. */
+.personal-page .shared-profile-link{display:none}
+
 @media(max-width:380px){
   .shell .brand h1{font-size:24px}
   .shell .shared-header{gap:8px}
-  .shell .shared-profile-link{margin-top:13px;gap:5px}
+  .shell .shared-profile-link{margin-top:7px;gap:5px}
   .shell .shared-greeting small{font-size:11px}
   .shell .shared-greeting b{font-size:16px}
   .shell .shared-avatar .avatar-img{width:43px;height:43px}
