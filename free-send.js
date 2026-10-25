@@ -9,7 +9,7 @@ async function sendFreeMailboxLetter(message){
 }
 
 function freeSendHtml(){
-  return `<section class="card"><div class="mission-head"><div><span class="mission-kicker">TO MY SECRET SANTA</span><h2>마니또에게 보내기</h2></div></div><p class="muted">미션이 아니어도 언제든 마니또에게 마음을 보낼 수 있어.</p><textarea id="free-send-text" class="field mission-note" placeholder="마니또에게 전할 말을 적어줘"></textarea><div class="mission-actions"><button id="free-message-send" class="secondary">익명 메시지 보내기</button><button id="free-mailbox-send" class="primary">우체통에 넣기</button></div><p class="muted" style="margin-top:10px">익명 메시지는 바로 전달되고, 우체통 편지는 연말 파티 날까지 봉인돼.</p></section>`;
+  return `<section class="card"><div class="mission-head"><div><span class="mission-kicker">WRITE A LETTER</span><h2>편지 쓰기</h2></div></div><p class="muted">미션이 아니어도 언제든 편지를 쓸 수 있어.<br>쓰고 싶은 내용을 적어줘.</p><textarea id="free-send-text" class="field mission-note" placeholder="쓰고 싶은 내용을 적어줘"></textarea><div class="mission-actions"><button id="free-message-send" class="secondary">마니또에게 익명으로 보내기</button><button id="free-mailbox-send" class="primary">우체통에 넣기</button></div><p class="muted" style="margin-top:10px">익명으로 보내면 마니또에게 바로 전달되고, 우체통에 넣으면 연말 파티 날까지 봉인돼.</p></section>`;
 }
 
 me=async function(){
@@ -26,7 +26,7 @@ me=async function(){
     const value=text();
     if(!value)return alert('보낼 내용을 적어줘.');
     messageButton.disabled=true;
-    try{await sendSecretMessage(value,null);alert('MY SECRET SANTA 이름으로 익명 메시지를 보냈어!');me()}catch(e){messageButton.disabled=false;alert('메시지를 보내지 못했어. 다시 시도해줘.')}
+    try{await sendSecretMessage(value,null);alert('마니또에게 익명으로 보냈어!');me()}catch(e){messageButton.disabled=false;alert('메시지를 보내지 못했어. 다시 시도해줘.')}
   };
   if(mailboxButton)mailboxButton.onclick=async()=>{
     const value=text();
