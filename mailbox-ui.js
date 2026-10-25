@@ -3,8 +3,7 @@ const mailboxBaseMe=me;
 const mailboxBaseSecret=secret;
 
 function mailboxSummaryHtml(total){
-  const pct=Math.min(100,Math.round(total/30*100));
-  return `<section class="card mailbox-summary"><div class="mission-head"><div><span class="mission-kicker">MOOMOO MAILBOX</span><h2>무무클럽 우체통</h2></div><b>${total} / 30</b></div><div style="font-size:44px;text-align:center;margin:12px 0">📮</div><p class="muted" style="text-align:center">지금까지 ${total}통의 편지가 도착했어요.</p><div class="race-track"><i style="width:${pct}%"></i></div></section>`;
+  return `<section class="card mailbox-summary"><div class="mission-head"><div><span class="mission-kicker">MOOMOO MAILBOX</span><h2>무무클럽 우체통</h2></div><b>${total}통</b></div><div style="font-size:44px;text-align:center;margin:12px 0">📮</div><p class="muted" style="text-align:center">지금까지 ${total}통의 편지가 도착했어요.</p></section>`;
 }
 
 home=async function(){
