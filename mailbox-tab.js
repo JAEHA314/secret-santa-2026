@@ -20,7 +20,8 @@ render=function(page='home'){
 async function mailboxPage(){
   let box={total:0,mine:[]};
   try{box=await loadMailboxCounts()}catch(e){console.warn(e)}
-  $('#app').innerHTML=shell(`${mailboxSummaryHtml(box.total)}${freeSendHtml()}${mailboxMineHtml(box.mine)}`);
+  const summary=mailboxSummaryHtml(box.total).replace('</section>',`<p class="muted mailbox-my-count" style="text-align:center">내가 넣은 편지 <b>${box.mine.length}통</b></p></section>`);
+  $('#app').innerHTML=shell(`${summary}${freeSendHtml()}`);
   const main=document.querySelector('main');
   if(main)main.classList.add('mailbox-page');
   const compose=document.querySelector('#free-send-text')?.closest('.card');
@@ -65,7 +66,7 @@ home=async function(){
   }
 };
 
-// ME에서는 프로필/로그아웃 + 받은 익명 메시지함을 유지하고, 나의 우체통 기록만 MAIL 탭으로 옮긴다.
+// ME에서는 프로필/로그아웃 + 받은 익명 메시지함만 유지한다.
 const mailboxTabMe=me;
 me=async function(){
   await mailboxTabMe();
