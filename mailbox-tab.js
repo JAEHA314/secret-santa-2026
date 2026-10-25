@@ -17,6 +17,10 @@ async function mailboxPage(){
   let box={total:0,mine:[]};
   try{box=await loadMailboxCounts()}catch(e){console.warn(e)}
   $('#app').innerHTML=shell(`${mailboxSummaryHtml(box.total)}${freeSendHtml()}`);
+  const main=document.querySelector('main');
+  if(main)main.classList.add('mailbox-page');
+  const compose=document.querySelector('#free-send-text')?.closest('.card');
+  if(compose)compose.classList.add('compose-card');
   bindNav();
   bindMailboxCompose(()=>mailboxPage());
 }
