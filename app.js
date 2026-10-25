@@ -3,7 +3,7 @@ const PEOPLE=[
 {id:'dog',name:'왈왈이',face:'🐶',image:'dog.png'},
 {id:'frog',name:'고굴맨',face:'🐸'},
 {id:'cat',name:'하묘',face:'🐱',image:'cat.png'},
-{id:'rabbit',name:'쿠끼',face:'🐰'},
+{id:'rabbit',name:'쿠끼',face:'🐰',image:'rabbit.png'},
 {id:'glasses',name:'민디비',face:'🤓',image:'glasses.png'}];
 const KEY='ss26-state';
 const SUPABASE_URL='https://ssmtlccnezwtaozmwwbe.supabase.co';
