@@ -1,3 +1,23 @@
-/* HOME header refinements */
-.home-layout.shell{position:relative}.home-layout.shell .brand{width:auto;max-width:none;margin:14px 0 26px;text-align:left;padding-right:150px}.home-layout.shell .brand .club-name{margin:0 0 0 2px;font-size:12px;line-height:1.05}.home-layout.shell .brand h1{margin:1px 0 0;line-height:1.02}.home-layout.shell .top{position:absolute;top:14px;right:20px;display:flex;align-items:center;justify-content:flex-end;gap:7px;margin:0}.home-layout.shell .top>div:first-child{display:flex;align-items:baseline;gap:4px;white-space:nowrap}.home-layout.shell .top small{font-size:12px}.home-layout.shell .top h2{margin:0;font-size:18px;line-height:1.1}.home-layout.shell .top .avatar{flex:0 0 auto;margin:0}.home-layout.shell .top .avatar-img{width:48px;height:48px;object-fit:contain}
-@media(max-width:380px){.home-layout.shell .brand{padding-right:130px}.home-layout.shell .brand h1{font-size:25px}.home-layout.shell .top{right:16px;gap:5px}.home-layout.shell .top small{font-size:11px}.home-layout.shell .top h2{font-size:16px}.home-layout.shell .top .avatar-img{width:43px;height:43px}}
+/* Shared Secret Santa header refinements */
+.shell .brand{width:auto;max-width:none;margin:14px 0 26px;text-align:left}
+.shell .brand .club-name{margin:0 0 0 2px;font-size:12px;line-height:1.05}
+.shell .brand h1{margin:1px 0 0;font-size:27px;line-height:1.02}
+
+/* HOME: title on the left, greeting + character on the same header row */
+.home-layout.shell{position:relative}
+.home-layout.shell .brand{padding-right:150px}
+.home-layout.shell .top{position:absolute;top:21px;right:20px;display:flex;align-items:center;justify-content:flex-end;gap:7px;margin:0}
+.home-layout.shell .top>div:first-child{display:flex;align-items:baseline;gap:4px;white-space:nowrap}
+.home-layout.shell .top small{font-size:12px}
+.home-layout.shell .top h2{margin:0;font-size:18px;line-height:1.1}
+.home-layout.shell .top .avatar{flex:0 0 auto;margin:0}
+.home-layout.shell .top .avatar-img{width:48px;height:48px;object-fit:contain}
+
+@media(max-width:380px){
+  .shell .brand h1{font-size:24px}
+  .home-layout.shell .brand{padding-right:130px}
+  .home-layout.shell .top{right:16px;top:20px;gap:5px}
+  .home-layout.shell .top small{font-size:11px}
+  .home-layout.shell .top h2{font-size:16px}
+  .home-layout.shell .top .avatar-img{width:43px;height:43px}
+}
