@@ -66,6 +66,16 @@ home=async function(){
   }
 };
 
+// SECRET 화면은 한 화면에 마니또와 오늘의 미션이 최대한 함께 보이도록 압축한다.
+const mailboxTabSecret=secret;
+secret=async function(){
+  await mailboxTabSecret();
+  const main=document.querySelector('main');
+  if(main)main.classList.add('secret-page');
+  const cards=[...document.querySelectorAll('main .card')];
+  if(cards[0])cards[0].classList.add('secret-person-card');
+};
+
 // ME에서는 프로필/로그아웃 + 받은 익명 메시지함만 유지한다.
 const mailboxTabMe=me;
 me=async function(){
