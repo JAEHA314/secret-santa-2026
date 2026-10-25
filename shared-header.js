@@ -1,4 +1,4 @@
-// Shared logged-in header: title + greeting/profile on every tab.
+// Shared logged-in header: title + greeting/profile on every main tab.
 const sharedHeaderBaseShell=shell;
 
 shell=function(body,nav=true){
@@ -16,4 +16,12 @@ bindNav=function(){
   document.querySelectorAll('.shared-profile-link').forEach(button=>{
     button.onclick=()=>render('me');
   });
+};
+
+// On the personal page, keep the title but hide the redundant greeting/profile shortcut.
+const sharedHeaderBaseMe=me;
+me=async function(){
+  await sharedHeaderBaseMe();
+  const main=document.querySelector('main');
+  if(main)main.classList.add('personal-page');
 };
