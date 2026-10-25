@@ -25,9 +25,15 @@ ensureMissions=async function(){
   return loadMissions();
 };
 
-async function completeFirstWish(row){
-  const r=await fetch(`${SUPABASE_URL}/rest/v1/player_missions?player_id=eq.${encodeURIComponent(state.user)}&mission_id=eq.${FIRST_WISH_MISSION_ID}`,{method:'PATCH',headers:apiHeaders,body:JSON.stringify({status:'completed',note:'위시리스트 작성 완료',completed_at:new Date().toISOString()})});
-  if(!r.ok)throw new Error('first wish complete');
+async function completeFirstWish(){
+  const r=await fetch(`${SUPABASE_URL}/rest/v1/player_missions?player_id=eq.${encodeURIComponent(state.user)}&mission_id=eq.${FIRST_WISH_MISSION_ID}`,{
+    method:'PATCH',
+    headers:{...apiHeaders,Prefer:'return=representation'},
+    body:JSON.stringify({status:'completed',note:'위시리스트 작성 완료',completed_at:new Date().toISOString()})
+  });
+  if(!r.ok)throw new Error(`first wish complete ${r.status}`);
+  const rows=await r.json();
+  if(!rows.length)throw new Error('first wish row missing');
 }
 
 const secretBeforeFirstWish=secret;
@@ -68,7 +74,16 @@ function openFirstWishlist(firstRow){
     const likes=$('#first-wish-likes').value.trim(),dislikes=$('#first-wish-dislikes').value.trim();
     if(!likes&&!dislikes)return alert('좋아하는 것 또는 싫어하는 것을 하나 이상 적어줘.');
     const b=$('#first-wish-save');b.disabled=true;
-    try{await saveWishlist(state.user,likes,dislikes);await completeFirstWish(firstRow);secret()}catch(e){b.disabled=false;alert('저장하지 못했어. 다시 시도해줘.')}
+    try{
+      await saveWishlist(state.user,likes,dislikes);
+      await completeFirstWish();
+      await loadWishlists();
+      secret();
+    }catch(e){
+      console.error(e);
+      b.disabled=false;
+      alert('저장하지 못했어. 다시 시도해줘.');
+    }
   };
 }
 
