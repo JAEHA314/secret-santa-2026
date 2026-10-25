@@ -2,7 +2,7 @@ const PEOPLE=[
 {id:'bear',name:'곰아',face:'🐻‍❄️',image:'bear.png'},
 {id:'dog',name:'왈왈이',face:'🐶',image:'dog.png'},
 {id:'frog',name:'고굴맨',face:'🐸'},
-{id:'cat',name:'하묘',face:'🐱'},
+{id:'cat',name:'하묘',face:'🐱',image:'cat.png'},
 {id:'rabbit',name:'쿠끼',face:'🐰'},
 {id:'glasses',name:'민디비',face:'🤓',image:'glasses.png'}];
 const KEY='ss26-state';
