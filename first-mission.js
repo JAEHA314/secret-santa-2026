@@ -2,7 +2,6 @@
 const FIRST_WISH_MISSION_ID=25;
 const TOTAL_MISSIONS=25;
 
-// Wishlist rows may not exist after a test reset, so save with an upsert.
 saveWishlist=async function(id,likes,dislikes){
   const payload={player_id:id,likes,dislikes,updated_at:new Date().toISOString()};
   const r=await fetch(`${SUPABASE_URL}/rest/v1/wishlists`,{method:'POST',headers:{...apiHeaders,Prefer:'resolution=merge-duplicates,return=representation'},body:JSON.stringify(payload)});
@@ -12,7 +11,6 @@ saveWishlist=async function(id,likes,dislikes){
   save();
 };
 
-// Create 25 missions: wishlist is always queue #1, the original 24 are shuffled after it.
 ensureMissions=async function(){
   let rows=await loadMissions();
   if(rows.length===TOTAL_MISSIONS)return rows;
@@ -36,8 +34,6 @@ const secretBeforeFirstWish=secret;
 secret=async function(){
   try{await loadGame()}catch(e){}
   const has=!!state.drawnBy[state.user];
-
-  // No mission card before the user draws and reveals their Secret Santa recipient.
   if(!has){
     $('#app').innerHTML=shell(`<section class="card secret-person-card"><h2>내 마니또를 뽑아볼까?</h2><div class="reveal">🎁</div><button id="draw" class="primary">마니또 뽑기</button></section>`);
     const main=$('#app .shell');if(main)main.classList.add('secret-page');
@@ -59,13 +55,13 @@ secret=async function(){
     $('#first-wish-open').onclick=()=>openFirstWishlist(first);
     return;
   }
-
   return secretBeforeFirstWish();
 };
 
 function openFirstWishlist(firstRow){
   const p=person(state.user),w=state.wishlists[state.user]||{likes:'',dislikes:''};
-  $('#app').innerHTML=shell(`<button id="first-wish-back" class="text-back">‹ SECRET으로</button><section class="card wish-detail"><div class="wish-profile"><span class="wish-face">${visual(p,'wish-detail-img')}</span><h2 class="character-${p.id}">${p.name}</h2></div><label>❤️ 좋아요</label><textarea id="first-wish-likes" class="field wish-textarea">${esc(w.likes||'')}</textarea><label>💔 싫어요</label><textarea id="first-wish-dislikes" class="field wish-textarea">${esc(w.dislikes||'')}</textarea><button id="first-wish-save" class="primary">저장하고 미션 완료</button></section>`);
+  $('#app').innerHTML=shell(`<button id="first-wish-back" class="text-back">‹ SECRET으로</button><section class="card wish-detail first-wish-card"><div class="wish-profile"><span class="wish-face">${visual(p,'wish-detail-img')}</span><h2 class="character-${p.id}">${p.name}</h2></div><label>❤️ 좋아요</label><textarea id="first-wish-likes" class="field wish-textarea">${esc(w.likes||'')}</textarea><label>💔 싫어요</label><textarea id="first-wish-dislikes" class="field wish-textarea">${esc(w.dislikes||'')}</textarea><button id="first-wish-save" class="primary">저장하고 미션 완료</button></section>`);
+  const main=$('#app .shell');if(main)main.classList.add('first-wish-page');
   bindNav();
   $('#first-wish-back').onclick=secret;
   $('#first-wish-save').onclick=async()=>{
@@ -76,11 +72,10 @@ function openFirstWishlist(firstRow){
   };
 }
 
-// All progress displays use 25 missions. The underlying count already includes mission 25.
 const homeBeforeFirstWish=home;
 home=async function(){
   await homeBeforeFirstWish();
   document.querySelectorAll('.race-row>b').forEach(el=>{el.textContent=el.textContent.replace('/24','/25')});
   const titleCount=document.querySelector('.race-title>b');if(titleCount)titleCount.textContent=titleCount.textContent.replace('/24','/25');
-  document.querySelectorAll('.race-track i').forEach((bar,i)=>{const row=bar.closest('.race-row');const count=Number((row&&row.querySelector('b')?.textContent||'0').split('/')[0])||0;bar.style.width=`${count/TOTAL_MISSIONS*100}%`});
+  document.querySelectorAll('.race-track i').forEach(bar=>{const row=bar.closest('.race-row');const count=Number((row&&row.querySelector('b')?.textContent||'0').split('/')[0])||0;bar.style.width=`${count/TOTAL_MISSIONS*100}%`});
 };
