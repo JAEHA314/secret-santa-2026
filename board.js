@@ -14,6 +14,7 @@ async function createBoardPost(content,missionId=null){
 }
 
 function boardMissionTitle(id){
+  if(id==null)return '자유롭게 남긴 이야기';
   const m=MISSIONS.find(x=>x.id===Number(id));
   return m?m.title:'무무클럽 이야기';
 }
@@ -28,11 +29,17 @@ async function boardPage(){
   const notes=posts.length?posts.map(x=>{
     const p=person(x.player_id);
     return `<article class="chalk-note"><div class="chalk-author">${p?visual(p,'board-avatar'):''}<span>${p?esc(p.name):'무무클럽'}</span></div><small>${esc(boardMissionTitle(x.mission_id))}</small><p>${esc(x.content).replace(/\n/g,'<br>')}</p></article>`;
-  }).join(''):`<div class="chalk-empty">아직 칠판이 비어 있어.<br>BOARD 미션을 완료하면 여기에 하나씩 적혀!</div>`;
-  $('#app').innerHTML=shell(`<button id="board-back" class="text-back">‹ HOME으로</button><section class="chalk-frame"><div class="chalkboard"><div class="chalk-heading"><span>MOOMOO CLUB</span><h2>우리의 칠판</h2><b>${posts.length}개의 이야기</b></div><div class="chalk-notes">${notes}</div><div class="chalk-tray"><i></i><i></i><i></i></div></div></section>`);
+  }).join(''):`<div class="chalk-empty">아직 칠판이 비어 있어.<br>첫 이야기를 남겨봐!</div>`;
+  $('#app').innerHTML=shell(`<button id="board-back" class="text-back">‹ HOME으로</button><section class="chalk-frame"><div class="chalkboard"><div class="chalk-heading"><span>MOOMOO CLUB</span><h2>우리의 칠판</h2><b>${posts.length}개의 이야기</b></div><div class="chalk-compose"><textarea id="board-free-text" maxlength="300" placeholder="무무클럽 칠판에 자유롭게 남겨봐."></textarea><button id="board-free-post" type="button">분필로 적기</button></div><div class="chalk-notes">${notes}</div><div class="chalk-tray"><i></i><i></i><i></i></div></div></section>`);
   const main=document.querySelector('main');if(main)main.classList.add('board-page');
   bindNav();
   $('#board-back').onclick=home;
+  $('#board-free-post').onclick=async()=>{
+    const text=$('#board-free-text').value.trim();
+    if(!text)return alert('칠판에 남길 내용을 적어줘.');
+    const button=$('#board-free-post');button.disabled=true;
+    try{await createBoardPost(text,null);await boardPage()}catch(e){button.disabled=false;alert('칠판에 올리지 못했어. 다시 시도해줘.')}
+  };
 }
 
 // HOME에 칠판 입구를 추가한다.
