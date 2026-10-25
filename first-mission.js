@@ -90,6 +90,7 @@ function openFirstWishlist(firstRow){
 const homeBeforeFirstWish=home;
 home=async function(){
   await homeBeforeFirstWish();
+  const homeShell=$('#app .shell');if(homeShell)homeShell.classList.add('home-layout');
   document.querySelectorAll('.race-row>b').forEach(el=>{el.textContent=el.textContent.replace('/24','/25')});
   const titleCount=document.querySelector('.race-title>b');if(titleCount)titleCount.textContent=titleCount.textContent.replace('/24','/25');
   document.querySelectorAll('.race-track i').forEach(bar=>{const row=bar.closest('.race-row');const count=Number((row&&row.querySelector('b')?.textContent||'0').split('/')[0])||0;bar.style.width=`${count/TOTAL_MISSIONS*100}%`});
