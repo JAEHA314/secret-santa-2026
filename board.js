@@ -24,6 +24,18 @@ function boardMissionTitle(id){
   return m?m.title:'무무클럽 이야기';
 }
 
+function boardDate(value){
+  if(!value)return '';
+  const d=new Date(value);
+  return `${d.getMonth()+1}.${d.getDate()}`;
+}
+
+function boardFullDate(value){
+  if(!value)return '';
+  const d=new Date(value);
+  return `${d.getFullYear()}.${String(d.getMonth()+1).padStart(2,'0')}.${String(d.getDate()).padStart(2,'0')}`;
+}
+
 function boardPreviewHtml(posts){
   return `<button id="open-board" class="card board-preview" type="button"><div><span class="mission-kicker">MOOMOO BOARD</span><h2>무무클럽 칠판</h2><p>우리의 제안을 한곳에 모아봐.</p></div><strong>${posts.length}개 ›</strong></button>`;
 }
@@ -35,7 +47,7 @@ function openBoardPost(post){
   const canDelete=post.mission_id==null&&post.player_id===state.user;
   const modal=document.createElement('div');
   modal.className='board-modal';
-  modal.innerHTML=`<div class="board-modal-backdrop" data-close-board-modal></div><article class="board-modal-note ${stickyColorClass(post.player_id)}"><button class="board-modal-close" data-close-board-modal type="button" aria-label="닫기">×</button><div class="board-modal-author">${p?visual(p,'board-modal-avatar'):''}<div><b>${p?esc(p.name):'무무클럽'}</b><small>${esc(boardMissionTitle(post.mission_id))}</small></div></div><p>${esc(post.content).replace(/\n/g,'<br>')}</p>${canDelete?`<button class="board-modal-delete" type="button">이 글 삭제하기</button>`:''}</article>`;
+  modal.innerHTML=`<div class="board-modal-backdrop" data-close-board-modal></div><article class="board-modal-note ${stickyColorClass(post.player_id)}"><button class="board-modal-close" data-close-board-modal type="button" aria-label="닫기">×</button><div class="board-modal-meta"><b>${p?esc(p.name):'무무클럽'}</b><span>${esc(boardMissionTitle(post.mission_id))}</span><time>${boardFullDate(post.created_at)}</time></div><p>${esc(post.content).replace(/\n/g,'<br>')}</p>${canDelete?`<button class="board-modal-delete" type="button">이 글 삭제하기</button>`:''}</article>`;
   document.body.appendChild(modal);
   modal.querySelectorAll('[data-close-board-modal]').forEach(x=>x.onclick=()=>modal.remove());
   const del=modal.querySelector('.board-modal-delete');
@@ -50,9 +62,8 @@ async function boardPage(){
   let posts=[];
   try{posts=await loadBoardPosts()}catch(e){console.warn(e)}
   const notes=posts.length?posts.map((x,i)=>{
-    const p=person(x.player_id);
-    const preview=x.content.length>22?`${x.content.slice(0,22)}…`:x.content;
-    return `<button class="sticky-note ${stickyColorClass(x.player_id)} sticky-tilt-${i%5}" data-board-post="${x.id}" type="button"><span class="sticky-pin"></span><div class="sticky-author">${p?visual(p,'board-avatar'):''}<b>${p?esc(p.name):'무무클럽'}</b></div><small>${x.mission_id==null?'FREE NOTE':'MISSION'}</small><p>${esc(preview)}</p></button>`;
+    const preview=x.content.length>18?`${x.content.slice(0,18)}…`:x.content;
+    return `<button class="sticky-note ${stickyColorClass(x.player_id)} sticky-tilt-${i%5}" data-board-post="${x.id}" type="button"><time>${boardDate(x.created_at)}</time><p>${esc(preview)}</p></button>`;
   }).join(''):`<div class="chalk-empty">아직 칠판이 비어 있어.<br>첫 포스트잇을 붙여봐!</div>`;
   $('#app').innerHTML=shell(`<button id="board-back" class="text-back">‹ HOME으로</button><section class="chalk-frame"><div class="chalkboard"><div class="chalk-heading"><span>MOOMOO CLUB</span><h2>우리의 칠판</h2><b>${posts.length}개의 이야기</b></div><div class="chalk-notes sticky-grid">${notes}</div><div class="chalk-tray"><i></i><i></i><i></i></div></div></section><section class="board-compose-card"><div><span class="mission-kicker">FREE NOTE</span><h3>포스트잇 붙이기</h3></div><textarea id="board-free-text" maxlength="300" placeholder="무무클럽 칠판에 자유롭게 남겨봐."></textarea><button id="board-free-post" class="primary" type="button">포스트잇 붙이기</button></section>`);
   const main=document.querySelector('main');if(main)main.classList.add('board-page');
