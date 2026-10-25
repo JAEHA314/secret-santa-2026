@@ -82,12 +82,48 @@ secret=async function(){
   };
 };
 
+home=async function(){
+  try{await loadSharedSettings()}catch(e){}
+  const u=person(state.user),d=days();
+  let race=[];
+  try{race=await missionCounts()}catch(e){console.warn(e)}
+  race.sort((a,b)=>b.count-a.count);
+  const leader=race.length?race[0].count:0;
+  const mine=race.find(x=>x.person.id===state.user);
+  const completed=mine?mine.count:0;
+  const raceHtml=race.map(x=>`<div class="race-row"><div class="race-person">${visual(x.person,'race-img')}<span>${x.person.name}${leader>0&&x.count===leader?' 👑':''}</span></div><div class="race-track"><i style="width:${x.count/24*100}%"></i></div><b>${x.count}/24</b></div>`).join('');
+  $('#app').innerHTML=shell(`<div class="top"><div><small>안녕,</small><h2>${u.name}!</h2></div><div class="avatar">${visual(u,'avatar-img')}</div></div><section class="card hero"><div class="tree">🎄</div><h2>${d>=0?'D-'+d:'PARTY DAY!'}</h2><p class="muted">모두의 미션으로 트리를 완성해요.</p></section><section class="card"><div class="race-title"><div><small>MISSION RACE</small><h3>우리의 미션 현황</h3></div><b>${completed}/24</b></div><div class="race-list">${raceHtml||'<p class="muted">아직 미션 기록이 없어.</p>'}</div></section><div class="stats"><button id="edit-party-date" class="stat" style="border:0;font:inherit;cursor:pointer">연말 파티<strong>${esc(state.dDay)}</strong></button><button id="edit-gift-limit" class="stat" style="border:0;font:inherit;cursor:pointer">선물 상한<strong>${Number(state.giftLimit).toLocaleString()}원</strong></button></div>`);
+  bindNav();
+  $('#edit-party-date').onclick=()=>editSharedSetting('date');
+  $('#edit-gift-limit').onclick=()=>editSharedSetting('gift');
+};
+
+function editSharedSetting(type){
+  const isDate=type==='date';
+  const ok=confirm(`⚠️ ${isDate?'연말 파티 날짜':'선물 상한 금액'}를 수정할까요?\n\n여기서 변경하면 나뿐 아니라 무무클럽 모두에게 똑같이 적용돼요.`);
+  if(!ok)return;
+  const title=isDate?'연말 파티 날짜 수정':'선물 상한 수정';
+  const input=isDate
+    ? `<input id="shared-setting-value" class="field" type="date" value="${esc(state.dDay)}">`
+    : `<input id="shared-setting-value" class="field" type="number" min="0" step="1000" value="${Number(state.giftLimit)||0}">`;
+  $('#app').innerHTML=shell(`<section class="card"><h2>${title}</h2><p class="muted">⚠️ 저장하면 이 설정은 모든 멤버에게 변경돼요.</p>${input}<button id="save-shared-setting" class="primary">모두에게 적용</button><button id="cancel-shared-setting" class="secondary">취소</button></section>`);
+  bindNav();
+  $('#cancel-shared-setting').onclick=home;
+  $('#save-shared-setting').onclick=async()=>{
+    const value=$('#shared-setting-value').value;
+    if(isDate&&!value)return alert('날짜를 선택해줘.');
+    const nextDate=isDate?value:state.dDay;
+    const nextGift=isDate?state.giftLimit:Math.max(0,Number(value)||0);
+    if(!confirm('이 변경은 모든 멤버에게 바로 적용돼요. 저장할까요?'))return;
+    try{await saveSharedSettings(nextDate,nextGift);alert('모두에게 적용했어!');home()}catch(e){alert('저장하지 못했어. 다시 시도해줘.')}
+  };
+}
+
 me=async function(){
   const u=person(state.user);
   let messages=[];
   try{messages=await loadSecretMessages()}catch(e){console.warn(e)}
-  $('#app').innerHTML=shell(`<section class="card"><div class="reveal">${visual(u,'reveal-img')}</div><h2 style="text-align:center">${u.name}</h2><button id="logout" class="secondary">로그아웃</button></section>${secretInboxHtml(messages)}<section class="card"><h3>게임 설정</h3><label>연말 파티 날짜</label><input id="date" class="field" type="date" value="${state.dDay}"><label>선물 최대 금액</label><input id="price" class="field" type="number" value="${state.giftLimit}"><button id="settings" class="primary">설정 저장</button></section>`);
+  $('#app').innerHTML=shell(`<section class="card"><div class="reveal">${visual(u,'reveal-img')}</div><h2 style="text-align:center">${u.name}</h2><button id="logout" class="secondary">로그아웃</button></section>${secretInboxHtml(messages)}`);
   bindNav();
   $('#logout').onclick=()=>{state.user=null;save();render()};
-  $('#settings').onclick=async()=>{try{await saveSharedSettings($('#date').value,Math.max(0,Number($('#price').value)||0));alert('모두에게 저장했어!')}catch(e){alert('저장 실패')}};
 };
