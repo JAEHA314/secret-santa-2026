@@ -4,7 +4,11 @@ const mailboxTabBaseRender=render;
 shell=function(body,nav=true){
   if(!nav)return mailboxTabBaseShell(body,false);
   const html=mailboxTabBaseShell(body,true);
-  return html.replace('<button data-go="secret"><b>✦</b>SECRET</button>','<button data-go="mailbox"><b>✉</b>MAILBOX</button><button data-go="secret"><b>✦</b>SECRET</button>');
+  return html
+    .replace('<button data-go="home"><b>⌂</b>HOME</button>','<button data-go="home"><b>🏠</b>HOME</button>')
+    .replace('<button data-go="secret"><b>✦</b>SECRET</button>','<button data-go="mailbox"><b>✉️</b>MAIL</button><button data-go="secret"><b>🎅</b>SECRET</button>')
+    .replace('<button data-go="wish"><b>♡</b>WISH</button>','<button data-go="wish"><b>❤️</b>WISH</button>')
+    .replace('<button data-go="me"><b>☺</b>ME</button>','');
 };
 
 render=function(page='home'){
@@ -44,12 +48,21 @@ function bindMailboxCompose(refresh){
   };
 }
 
-// HOME에서는 공동 우체통 카드를 제거하고, MAILBOX 탭에서만 보여준다.
+// HOME에서는 공동 우체통 카드를 제거하고, 프로필 이미지를 눌러 ME로 이동한다.
 const mailboxTabHome=home;
 home=async function(){
   await mailboxTabHome();
   const card=[...document.querySelectorAll('.mailbox-summary')];
   card.forEach(x=>x.remove());
+  const avatar=document.querySelector('.top .avatar');
+  if(avatar){
+    avatar.setAttribute('role','button');
+    avatar.setAttribute('tabindex','0');
+    avatar.setAttribute('aria-label','내 화면 열기');
+    avatar.style.cursor='pointer';
+    avatar.onclick=()=>render('me');
+    avatar.onkeydown=e=>{if(e.key==='Enter'||e.key===' '){e.preventDefault();render('me')}};
+  }
 };
 
 // ME에서는 편지쓰기 카드를 제거하고 기존 익명 메시지함/나의 봉인 편지만 유지한다.
