@@ -19,6 +19,10 @@ function formatMessageDate(value){
   return `${d.getMonth()+1}.${String(d.getDate()).padStart(2,'0')}`;
 }
 
+function secretInboxHtml(messages){
+  return `<section class="card"><div class="mission-head"><div><span class="mission-kicker">MY SECRET SANTA</span><h2>익명 메시지함</h2></div><b>${messages.length}</b></div><div class="message-list">${messages.length?messages.map(x=>`<article class="secret-message"><div><b>MY SECRET SANTA</b><small>${formatMessageDate(x.created_at)}</small></div><p>${esc(x.message).replace(/\n/g,'<br>')}</p></article>`).join(''):'<p class="muted">아직 도착한 메시지가 없어.</p>'}</div></section>`;
+}
+
 const originalMissionPrompt=missionPrompt;
 missionPrompt=function(m){
   if(m.type==='message')return '내용을 적어 보내면 마니또에게 익명으로 전달되고 미션이 자동 완료돼.';
@@ -29,9 +33,7 @@ secret=async function(){
   try{await loadGame()}catch(e){}
   const has=!!state.drawnBy[state.user];
   let rows=[];
-  let messages=[];
   try{rows=await ensureMissions()}catch(e){console.warn(e)}
-  try{messages=await loadSecretMessages()}catch(e){console.warn(e)}
   const completed=rows.filter(x=>x.status==='completed').length;
   const current=rows.find(x=>x.status==='pending');
   const m=current&&MISSIONS.find(x=>x.id===current.mission_id);
@@ -56,9 +58,7 @@ secret=async function(){
     mission=`<section class="card mission-card mission-clear"><span>⭐</span><h2>24/24 ALL CLEAR!</h2><p class="muted">모든 미션을 완료했어.</p></section>`;
   }
 
-  const inbox=has?`<section class="card"><div class="mission-head"><div><span class="mission-kicker">MY SECRET SANTA</span><h2>익명 메시지함</h2></div><b>${messages.length}</b></div><div class="message-list">${messages.length?messages.map(x=>`<article class="secret-message"><div><b>MY SECRET SANTA</b><small>${formatMessageDate(x.created_at)}</small></div><p>${esc(x.message).replace(/\n/g,'<br>')}</p></article>`).join(''):'<p class="muted">아직 도착한 메시지가 없어.</p>'}</div></section>`:'';
-
-  $('#app').innerHTML=shell(`${identity}${mission}${inbox}`);
+  $('#app').innerHTML=shell(`${identity}${mission}`);
   bindNav();
   if($('#draw'))$('#draw').onclick=async()=>{try{await createAssignmentsIfNeeded();await setDrawn(state.user,true);secret()}catch(e){alert('마니또 추첨에 실패했어.')}};
   if($('#mission-wish'))$('#mission-wish').onclick=wish;
@@ -80,4 +80,14 @@ secret=async function(){
       alert('메시지를 보내지 못했어. 다시 시도해줘.');
     }
   };
+};
+
+me=async function(){
+  const u=person(state.user);
+  let messages=[];
+  try{messages=await loadSecretMessages()}catch(e){console.warn(e)}
+  $('#app').innerHTML=shell(`<section class="card"><div class="reveal">${visual(u,'reveal-img')}</div><h2 style="text-align:center">${u.name}</h2><button id="logout" class="secondary">로그아웃</button></section>${secretInboxHtml(messages)}<section class="card"><h3>게임 설정</h3><label>연말 파티 날짜</label><input id="date" class="field" type="date" value="${state.dDay}"><label>선물 최대 금액</label><input id="price" class="field" type="number" value="${state.giftLimit}"><button id="settings" class="primary">설정 저장</button></section>`);
+  bindNav();
+  $('#logout').onclick=()=>{state.user=null;save();render()};
+  $('#settings').onclick=async()=>{try{await saveSharedSettings($('#date').value,Math.max(0,Number($('#price').value)||0));alert('모두에게 저장했어!')}catch(e){alert('저장 실패')}};
 };
