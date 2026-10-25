@@ -1,23 +1,24 @@
-/* Shared Secret Santa header refinements */
-.shell .brand{width:auto;max-width:none;margin:14px 0 26px;text-align:left}
+/* Shared Secret Santa header */
+.shell{position:relative}
+.shell .shared-header{display:flex;align-items:flex-start;justify-content:space-between;gap:12px;margin:14px 0 26px}
+.shell .shared-header .brand{width:auto;max-width:none;margin:0;text-align:left;min-width:0}
 .shell .brand .club-name{margin:0 0 0 2px;font-size:12px;line-height:1.05}
 .shell .brand h1{margin:1px 0 0;font-size:27px;line-height:1.02}
+.shell .shared-profile-link{border:0;background:transparent;padding:0;margin:13px 0 0;display:flex;align-items:center;gap:7px;flex:0 0 auto;font:inherit;color:inherit;cursor:pointer}
+.shell .shared-greeting{display:flex;align-items:baseline;gap:4px;white-space:nowrap}
+.shell .shared-greeting small{font-size:12px}
+.shell .shared-greeting b{font-size:18px;line-height:1.1}
+.shell .shared-avatar{display:block;line-height:0}
+.shell .shared-avatar .avatar-img{width:48px;height:48px;object-fit:contain}
 
-/* HOME: title on the left, greeting + character on the same header row */
-.home-layout.shell{position:relative}
-.home-layout.shell .brand{padding-right:150px}
-.home-layout.shell .top{position:absolute;top:21px;right:20px;display:flex;align-items:center;justify-content:flex-end;gap:7px;margin:0}
-.home-layout.shell .top>div:first-child{display:flex;align-items:baseline;gap:4px;white-space:nowrap}
-.home-layout.shell .top small{font-size:12px}
-.home-layout.shell .top h2{margin:0;font-size:18px;line-height:1.1}
-.home-layout.shell .top .avatar{flex:0 0 auto;margin:0}
-.home-layout.shell .top .avatar-img{width:48px;height:48px;object-fit:contain}
+/* The old HOME greeting is replaced by the shared header. */
+.home-layout.shell>.top{display:none}
 
 @media(max-width:380px){
   .shell .brand h1{font-size:24px}
-  .home-layout.shell .brand{padding-right:130px}
-  .home-layout.shell .top{right:16px;top:20px;gap:5px}
-  .home-layout.shell .top small{font-size:11px}
-  .home-layout.shell .top h2{font-size:16px}
-  .home-layout.shell .top .avatar-img{width:43px;height:43px}
+  .shell .shared-header{gap:8px}
+  .shell .shared-profile-link{margin-top:13px;gap:5px}
+  .shell .shared-greeting small{font-size:11px}
+  .shell .shared-greeting b{font-size:16px}
+  .shell .shared-avatar .avatar-img{width:43px;height:43px}
 }
