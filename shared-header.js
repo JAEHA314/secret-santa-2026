@@ -1,12 +1,22 @@
 // Shared logged-in header: title + greeting/profile on every main tab.
 const sharedHeaderBaseShell=shell;
 
+const sharedHeaderNameColors={
+  bear:'#6fa9c7',
+  dog:'#d6a62a',
+  frog:'#4f9a65',
+  cat:'#77736f',
+  rabbit:'#d9869d',
+  glasses:'#9474ad'
+};
+
 shell=function(body,nav=true){
   const html=sharedHeaderBaseShell(body,nav);
   if(!nav||!state.user)return html;
   const u=person(state.user);
   if(!u)return html;
-  const greeting=`<button class="shared-profile-link" type="button" aria-label="내 화면 열기"><span class="shared-greeting"><small>안녕,</small><b>${esc(u.name)}!</b></span><span class="shared-avatar">${visual(u,'avatar-img')}</span></button>`;
+  const nameColor=sharedHeaderNameColors[state.user]||'inherit';
+  const greeting=`<button class="shared-profile-link" type="button" aria-label="내 화면 열기"><span class="shared-greeting"><small>안녕,</small><b style="color:${nameColor}">${esc(u.name)}!</b></span><span class="shared-avatar">${visual(u,'avatar-img')}</span></button>`;
   return html.replace('<div class="brand">',`<div class="shared-header"><div class="brand">`).replace('</h1></div>',`</h1></div>${greeting}</div>`);
 };
 
