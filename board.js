@@ -37,7 +37,7 @@ function boardFullDate(value){
 }
 
 function boardPreviewHtml(posts){
-  return `<button id="open-board" class="card board-preview" type="button"><div><span class="mission-kicker">MOOMOO BOARD</span><h2>무무클럽 칠판</h2><p>우리의 제안을 한곳에 모아봐.</p></div><strong>${posts.length}개 ›</strong></button>`;
+  return `<button id="open-board" class="card board-preview" type="button"><h2>무무클럽 칠판</h2><strong>${posts.length}개 ›</strong></button>`;
 }
 
 function stickyColorClass(playerId){return `sticky-${playerId||'default'}`}
