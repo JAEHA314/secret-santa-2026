@@ -19,8 +19,10 @@ render=function(page='home'){
 
 async function mailboxPage(){
   let box={total:0,mine:[]};
+  let messages=[];
   try{box=await loadMailboxCounts()}catch(e){console.warn(e)}
-  $('#app').innerHTML=shell(`${mailboxSummaryHtml(box.total)}${freeSendHtml()}`);
+  try{messages=await loadSecretMessages()}catch(e){console.warn(e)}
+  $('#app').innerHTML=shell(`${mailboxSummaryHtml(box.total)}${freeSendHtml()}${secretInboxHtml(messages)}${mailboxMineHtml(box.mine)}`);
   const main=document.querySelector('main');
   if(main)main.classList.add('mailbox-page');
   const compose=document.querySelector('#free-send-text')?.closest('.card');
@@ -65,11 +67,10 @@ home=async function(){
   }
 };
 
-// ME에서는 편지쓰기 카드를 제거하고 기존 익명 메시지함/나의 봉인 편지만 유지한다.
+// ME는 프로필/로그아웃 전용으로 유지한다. 메시지함과 우체통 기록은 MAIL 탭에서 본다.
 const mailboxTabMe=me;
 me=async function(){
   await mailboxTabMe();
   const cards=[...document.querySelectorAll('main .card')];
-  const compose=cards.find(x=>x.querySelector('#free-send-text'));
-  if(compose)compose.remove();
+  cards.slice(1).forEach(card=>card.remove());
 };
