@@ -1,5 +1,5 @@
 const PEOPLE=[
-{id:'bear',name:'곰아',face:'🐻‍❄️'},
+{id:'bear',name:'곰아',face:'🐻‍❄️',image:'bear.png'},
 {id:'dog',name:'왈왈이',face:'🐶',image:'dog.png'},
 {id:'frog',name:'고굴맨',face:'🐸'},
 {id:'cat',name:'하묘',face:'🐱'},
