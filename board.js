@@ -28,15 +28,33 @@ function boardPreviewHtml(posts){
   return `<button id="open-board" class="card board-preview" type="button"><div><span class="mission-kicker">MOOMOO BOARD</span><h2>무무클럽 칠판</h2><p>우리의 제안을 한곳에 모아봐.</p></div><strong>${posts.length}개 ›</strong></button>`;
 }
 
+function stickyColorClass(playerId){return `sticky-${playerId||'default'}`}
+
+function openBoardPost(post){
+  const p=person(post.player_id);
+  const canDelete=post.mission_id==null&&post.player_id===state.user;
+  const modal=document.createElement('div');
+  modal.className='board-modal';
+  modal.innerHTML=`<div class="board-modal-backdrop" data-close-board-modal></div><article class="board-modal-note ${stickyColorClass(post.player_id)}"><button class="board-modal-close" data-close-board-modal type="button" aria-label="닫기">×</button><div class="board-modal-author">${p?visual(p,'board-modal-avatar'):''}<div><b>${p?esc(p.name):'무무클럽'}</b><small>${esc(boardMissionTitle(post.mission_id))}</small></div></div><p>${esc(post.content).replace(/\n/g,'<br>')}</p>${canDelete?`<button class="board-modal-delete" type="button">이 글 삭제하기</button>`:''}</article>`;
+  document.body.appendChild(modal);
+  modal.querySelectorAll('[data-close-board-modal]').forEach(x=>x.onclick=()=>modal.remove());
+  const del=modal.querySelector('.board-modal-delete');
+  if(del)del.onclick=async()=>{
+    if(!confirm('이 자유 글을 칠판에서 지울까?'))return;
+    del.disabled=true;
+    try{await deleteFreeBoardPost(post.id);modal.remove();await boardPage()}catch(e){del.disabled=false;alert('글을 삭제하지 못했어. 다시 시도해줘.')}
+  };
+}
+
 async function boardPage(){
   let posts=[];
   try{posts=await loadBoardPosts()}catch(e){console.warn(e)}
-  const notes=posts.length?posts.map(x=>{
+  const notes=posts.length?posts.map((x,i)=>{
     const p=person(x.player_id);
-    const canDelete=x.mission_id==null&&x.player_id===state.user;
-    return `<article class="chalk-note"><div class="chalk-author">${p?visual(p,'board-avatar'):''}<span>${p?esc(p.name):'무무클럽'}</span>${canDelete?`<button class="chalk-delete" data-board-delete="${x.id}" type="button" aria-label="글 삭제">×</button>`:''}</div><small>${esc(boardMissionTitle(x.mission_id))}</small><p>${esc(x.content).replace(/\n/g,'<br>')}</p></article>`;
-  }).join(''):`<div class="chalk-empty">아직 칠판이 비어 있어.<br>첫 이야기를 남겨봐!</div>`;
-  $('#app').innerHTML=shell(`<button id="board-back" class="text-back">‹ HOME으로</button><section class="chalk-frame"><div class="chalkboard"><div class="chalk-heading"><span>MOOMOO CLUB</span><h2>우리의 칠판</h2><b>${posts.length}개의 이야기</b></div><div class="chalk-notes">${notes}</div><div class="chalk-tray"><i></i><i></i><i></i></div></div></section><section class="board-compose-card"><div><span class="mission-kicker">FREE NOTE</span><h3>칠판에 한마디</h3></div><textarea id="board-free-text" maxlength="300" placeholder="무무클럽 칠판에 자유롭게 남겨봐."></textarea><button id="board-free-post" class="primary" type="button">분필로 적기</button></section>`);
+    const preview=x.content.length>22?`${x.content.slice(0,22)}…`:x.content;
+    return `<button class="sticky-note ${stickyColorClass(x.player_id)} sticky-tilt-${i%5}" data-board-post="${x.id}" type="button"><span class="sticky-pin"></span><div class="sticky-author">${p?visual(p,'board-avatar'):''}<b>${p?esc(p.name):'무무클럽'}</b></div><small>${x.mission_id==null?'FREE NOTE':'MISSION'}</small><p>${esc(preview)}</p></button>`;
+  }).join(''):`<div class="chalk-empty">아직 칠판이 비어 있어.<br>첫 포스트잇을 붙여봐!</div>`;
+  $('#app').innerHTML=shell(`<button id="board-back" class="text-back">‹ HOME으로</button><section class="chalk-frame"><div class="chalkboard"><div class="chalk-heading"><span>MOOMOO CLUB</span><h2>우리의 칠판</h2><b>${posts.length}개의 이야기</b></div><div class="chalk-notes sticky-grid">${notes}</div><div class="chalk-tray"><i></i><i></i><i></i></div></div></section><section class="board-compose-card"><div><span class="mission-kicker">FREE NOTE</span><h3>포스트잇 붙이기</h3></div><textarea id="board-free-text" maxlength="300" placeholder="무무클럽 칠판에 자유롭게 남겨봐."></textarea><button id="board-free-post" class="primary" type="button">포스트잇 붙이기</button></section>`);
   const main=document.querySelector('main');if(main)main.classList.add('board-page');
   bindNav();
   $('#board-back').onclick=home;
@@ -46,14 +64,12 @@ async function boardPage(){
     const button=$('#board-free-post');button.disabled=true;
     try{await createBoardPost(text,null);await boardPage()}catch(e){button.disabled=false;alert('칠판에 올리지 못했어. 다시 시도해줘.')}
   };
-  document.querySelectorAll('[data-board-delete]').forEach(button=>button.onclick=async()=>{
-    if(!confirm('이 자유 글을 칠판에서 지울까?'))return;
-    button.disabled=true;
-    try{await deleteFreeBoardPost(button.dataset.boardDelete);await boardPage()}catch(e){button.disabled=false;alert('글을 삭제하지 못했어. 다시 시도해줘.')}
+  document.querySelectorAll('[data-board-post]').forEach(button=>button.onclick=()=>{
+    const post=posts.find(x=>String(x.id)===String(button.dataset.boardPost));
+    if(post)openBoardPost(post);
   });
 }
 
-// HOME에 칠판 입구를 추가한다.
 const boardBaseHome=home;
 home=async function(){
   await boardBaseHome();
@@ -62,7 +78,6 @@ home=async function(){
   if(stats){stats.insertAdjacentHTML('beforebegin',boardPreviewHtml(posts));$('#open-board').onclick=boardPage;}
 };
 
-// BOARD 미션은 기록을 완료하는 순간 공동 칠판에도 게시한다.
 const boardBaseSecret=secret;
 secret=async function(){
   await boardBaseSecret();
@@ -72,22 +87,15 @@ secret=async function(){
   if(!mission||mission.type!=='board')return;
   const note=$('#mission-note');
   const complete=$('#mission-complete');
-  if(note)note.placeholder='칠판에 남길 제안을 적어줘';
+  if(note)note.placeholder='포스트잇에 남길 제안을 적어줘';
   if(complete){
-    complete.textContent='칠판에 붙이기';
+    complete.textContent='포스트잇 붙이기';
     complete.onclick=async()=>{
       const value=note?note.value.trim():'';
       if(!value)return alert('칠판에 남길 내용을 적어줘.');
       complete.disabled=true;
-      try{
-        await createBoardPost(value,mission.id);
-        await completeMission(current,value);
-        alert('무무클럽 칠판에 붙였어!');
-        secret();
-      }catch(e){
-        complete.disabled=false;
-        alert('칠판에 올리지 못했어. 다시 시도해줘.');
-      }
+      try{await createBoardPost(value,mission.id);await completeMission(current,value);alert('무무클럽 칠판에 포스트잇을 붙였어!');secret()}
+      catch(e){complete.disabled=false;alert('칠판에 올리지 못했어. 다시 시도해줘.')}
     };
   }
 };
