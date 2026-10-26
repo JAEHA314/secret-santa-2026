@@ -10,24 +10,27 @@
 .shell .shared-greeting small{font-size:11px;line-height:1}
 .shell .shared-greeting b{font-size:16px;line-height:1}
 .shell .shared-avatar{width:43px;height:43px;display:flex;align-items:center;justify-content:center;line-height:0;overflow:visible}
-.shell .shared-avatar .avatar-img{display:block;width:43px;height:43px;object-fit:contain;object-position:center center}
-/* The dog face artwork has a little more transparent space underneath than the others. */
-.shell .shared-avatar .avatar-img[src*="dog-face"]{transform:translateY(4px)}
+.shell .shared-avatar .avatar-img{display:block;width:43px;height:43px;object-fit:contain;object-position:center}
 .shell .shared-inbox-link{position:relative;border:0;background:transparent;padding:0 1px;margin:0;min-width:31px;height:43px;display:flex;align-items:center;justify-content:center;font-size:21px;line-height:1;cursor:pointer}
 .shell .shared-inbox-count{position:absolute;right:-3px;top:0;min-width:17px;height:17px;padding:0 4px;border-radius:99px;background:var(--red);color:white;font-size:10px;line-height:17px;text-align:center;font-weight:800}
 .home-layout.shell>.top{display:none}
 
-/* HOME: framed tree scene, with the complete 9:16 artwork visible. */
+/* Async route transition: never flash the previous page. */
+.route-loading{min-height:100dvh;padding:0;background:var(--paper)}
+.route-loading-dot{height:1px;overflow:hidden;opacity:0}
+.page-loading{visibility:hidden}
+
+/* HOME: title stays outside; the complete 9:16 artwork sits in one rounded frame. */
 body:has(.tree-home){overflow:hidden}
 body:has(.tree-home) .nav{bottom:max(8px,env(safe-area-inset-bottom));width:min(448px,calc(100% - 24px));border:1px solid rgba(222,213,200,.7);border-radius:22px;background:rgba(255,253,248,.9);box-shadow:0 6px 24px rgba(71,51,31,.12);backdrop-filter:blur(16px);-webkit-backdrop-filter:blur(16px);padding:7px 4px}
 .tree-home.shell{height:100dvh;min-height:0;max-width:480px;padding:22px 20px calc(86px + env(safe-area-inset-bottom));display:flex;flex-direction:column;overflow:hidden;background:var(--paper)}
 .tree-home .shared-header{position:relative;z-index:20;flex:0 0 auto;margin:8px 0 12px;padding:0;align-items:center}
-.tree-home .hero{position:relative;flex:1 1 auto;min-height:0;overflow:hidden;padding:0!important;margin:0!important;border:0!important;border-radius:18px!important;background:transparent!important;box-shadow:none!important;display:flex;justify-content:center;align-items:flex-start}
-.tree-home .hero>.shared-tree-wrap{width:100%;height:100%;margin:0}
+.tree-home .hero{position:relative;flex:1 1 auto;min-height:0;overflow:visible;padding:0!important;margin:0!important;border:0!important;background:transparent!important;box-shadow:none!important;display:flex;justify-content:center;align-items:flex-start}
+.tree-home .hero>.shared-tree-wrap{height:100%;width:auto;max-width:100%;aspect-ratio:9/16;margin:0 auto}
 .tree-home-hidden{display:none!important}
-.shared-tree-wrap{width:100%;height:100%}
+.shared-tree-wrap{position:relative}
 .shared-tree-canvas{position:relative;width:100%;height:100%;overflow:hidden;background:#f6e2ca;border-radius:18px}
-.shared-tree-canvas>img.shared-tree-bg,.shared-tree-canvas>img.shared-tree-layer{position:absolute;inset:0;width:100%;height:100%;display:block;object-fit:contain;object-position:center center;pointer-events:none;user-select:none}
+.shared-tree-canvas>img.shared-tree-bg,.shared-tree-canvas>img.shared-tree-layer{position:absolute;inset:0;width:100%;height:100%;display:block;object-fit:fill;pointer-events:none;user-select:none}
 .shared-tree-bg{z-index:0}
 .shared-tree-base{z-index:1}
 .shared-tree-layer{z-index:2}
@@ -35,19 +38,17 @@ body:has(.tree-home) .nav{bottom:max(8px,env(safe-area-inset-bottom));width:min(
 .tree-board-link{position:absolute;z-index:8;left:2.5%;top:1.5%;width:31%;padding:0;border:0;background:transparent;cursor:pointer;filter:drop-shadow(0 2px 2px rgba(70,38,20,.08))}
 .tree-board-link img{display:block;width:100%;height:auto;pointer-events:none}
 .tree-status{position:absolute;z-index:8;left:5%;top:22%;display:flex;flex-direction:column;align-items:flex-start;color:#18130f;text-shadow:0 1px 0 rgba(255,255,255,.2);line-height:1.18}
-.tree-status div{font-size:clamp(11px,3.1vw,15px);font-weight:700;margin-bottom:8px}
+.tree-status div{font-size:clamp(10px,2.8vw,14px);font-weight:700;margin-bottom:7px}
 .tree-status div b{font-size:1.16em}
-.tree-status strong{font-size:clamp(27px,8vw,40px);line-height:1;font-weight:900;letter-spacing:-1px}
-.tree-status span{font-size:clamp(11px,3.4vw,16px);font-weight:650;margin-top:2px}
+.tree-status strong{font-size:clamp(26px,7.5vw,38px);line-height:1;font-weight:900;letter-spacing:-1px}
+.tree-status span{font-size:clamp(10px,3vw,15px);font-weight:650;margin-top:2px}
 
-/* Mission faces stay inside the artwork, above the bottom edge. */
 .tree-race{position:absolute;z-index:9;left:3%;right:3%;bottom:2.2%;display:grid;grid-template-columns:repeat(6,minmax(0,1fr));align-items:end;gap:2px}
 .tree-racer{position:relative;min-width:0;height:55px;text-align:center;display:grid;grid-template-rows:39px 13px;justify-items:center;align-items:end}
 .tree-racer img{display:block;width:38px;height:38px;object-fit:contain;object-position:center bottom;filter:drop-shadow(0 1px 1px rgba(70,38,20,.08))}
 .tree-racer b{font-size:9px;line-height:13px;color:#211812;align-self:start}
 .tree-crown{position:absolute;z-index:2;top:-14px;left:50%;transform:translateX(-50%);width:22px;height:20px;font-size:18px;line-height:20px;text-align:center;margin:0;pointer-events:none}
 
-/* Personal page already shows the member prominently, so don't repeat only the profile shortcut. */
 .personal-page .shared-profile-link{display:none}
 
 @media(max-width:380px){
