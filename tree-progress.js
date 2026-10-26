@@ -42,11 +42,10 @@ home=async function(){
   const oldTree=hero.querySelector('.tree');
   if(oldTree)oldTree.outerHTML=sharedTreeHtml(completed,counts);
   main.classList.add('tree-home');
-  // HOME is deliberately a single scene; the old dashboard cards live elsewhere later.
   Array.from(main.children).forEach(el=>{
     if(el.classList.contains('shared-header')||el===hero)return;
     el.classList.add('tree-home-hidden');
   });
-  const board=document.querySelector('.tree-board-link');
-  if(board)board.onclick=()=>{if(typeof openBoard==='function')openBoard();else if(typeof board==='function')board();};
+  const boardLink=document.querySelector('.tree-board-link');
+  if(boardLink&&typeof boardPage==='function')boardLink.onclick=boardPage;
 };
