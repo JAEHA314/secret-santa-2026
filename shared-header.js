@@ -10,13 +10,15 @@ const sharedHeaderNameColors={
   glasses:'#9474ad'
 };
 
+function sharedFaceSrc(id){return `assets/characters/${id}-face.png`}
+
 shell=function(body,nav=true){
   const html=sharedHeaderBaseShell(body,nav);
   if(!nav||!state.user)return html;
   const u=person(state.user);
   if(!u)return html;
   const nameColor=sharedHeaderNameColors[state.user]||'inherit';
-  const greeting=`<div class="shared-user-tools"><button class="shared-profile-link" type="button" aria-label="내 화면 열기"><span class="shared-greeting"><small>안녕,</small><b style="color:${nameColor}">${esc(u.name)}!</b></span><span class="shared-avatar">${visual(u,'avatar-img')}</span></button><button class="shared-inbox-link" type="button" aria-label="받은 익명 메시지 보기"><span aria-hidden="true">💌</span><b class="shared-inbox-count">0</b></button></div>`;
+  const greeting=`<div class="shared-user-tools"><button class="shared-profile-link" type="button" aria-label="내 화면 열기"><span class="shared-greeting"><small>안녕,</small><b style="color:${nameColor}">${esc(u.name)}!</b></span><span class="shared-avatar"><img class="avatar-img" src="${sharedFaceSrc(state.user)}" alt="${esc(u.name)}"></span></button><button class="shared-inbox-link" type="button" aria-label="받은 익명 메시지 보기"><span aria-hidden="true">💌</span><b class="shared-inbox-count">0</b></button></div>`;
   return html.replace('<div class="brand">',`<div class="shared-header"><div class="brand">`).replace('</h1></div>',`</h1></div>${greeting}</div>`);
 };
 
@@ -46,12 +48,8 @@ async function showSharedInbox(){
 const sharedHeaderBaseBindNav=bindNav;
 bindNav=function(){
   sharedHeaderBaseBindNav();
-  document.querySelectorAll('.shared-profile-link').forEach(button=>{
-    button.onclick=()=>render('me');
-  });
-  document.querySelectorAll('.shared-inbox-link').forEach(button=>{
-    button.onclick=showSharedInbox;
-  });
+  document.querySelectorAll('.shared-profile-link').forEach(button=>{button.onclick=()=>render('me')});
+  document.querySelectorAll('.shared-inbox-link').forEach(button=>{button.onclick=showSharedInbox});
   refreshSharedInboxCount();
 };
 
