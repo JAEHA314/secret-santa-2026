@@ -17,6 +17,19 @@
 /* The old HOME greeting is replaced by the shared header. */
 .home-layout.shell>.top{display:none}
 
+/* Shared tree: every exported PNG uses the same 1080x1920 canvas, so layers keep the exact Procreate position. */
+.home-layout .hero{overflow:hidden;padding:0 0 18px}
+.home-layout .hero>.shared-tree-wrap{margin:0}
+.shared-tree-wrap{width:100%}
+.shared-tree-canvas{position:relative;width:100%;aspect-ratio:9/16;overflow:hidden;background:#f6e2ca}
+.shared-tree-canvas>img{position:absolute;inset:0;width:100%;height:100%;display:block;object-fit:contain;pointer-events:none;user-select:none}
+.shared-tree-bg{z-index:0}
+.shared-tree-base{z-index:1}
+.shared-tree-layer{z-index:2}
+.shared-tree-progress{display:flex;align-items:baseline;justify-content:center;gap:8px;padding:12px 14px 0;font-size:12px}
+.shared-tree-progress b{font-size:15px;color:var(--red)}
+.shared-tree-progress span{color:var(--muted)}
+
 /* Personal page already shows the member prominently, so don't repeat only the profile shortcut. */
 .personal-page .shared-profile-link{display:none}
 
@@ -29,4 +42,6 @@
   .shell .shared-greeting b{font-size:16px}
   .shell .shared-avatar .avatar-img{width:43px;height:43px}
   .shell .shared-inbox-link{min-width:30px;height:43px;font-size:21px}
+  .shared-tree-progress{gap:6px;font-size:11px}
+  .shared-tree-progress b{font-size:14px}
 }
