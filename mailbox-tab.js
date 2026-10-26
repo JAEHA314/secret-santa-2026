@@ -18,6 +18,7 @@ render=function(page='home'){
 };
 
 async function mailboxPage(){
+  $('#app').innerHTML=shell(`<div class="route-placeholder" aria-hidden="true"></div>`);
   let box={total:0,mine:[]};
   try{box=await loadMailboxCounts()}catch(e){console.warn(e)}
   const summary=mailboxSummaryHtml(box.total).replace('</section>',`<p class="muted mailbox-my-count" style="text-align:center">내가 넣은 편지 <b>${box.mine.length}통</b></p></section>`);
@@ -49,7 +50,6 @@ function bindMailboxCompose(refresh){
   };
 }
 
-// HOME에서는 공동 우체통 카드를 제거하고, 프로필 이미지를 눌러 ME로 이동한다.
 const mailboxTabHome=home;
 home=async function(){
   await mailboxTabHome();
@@ -66,7 +66,6 @@ home=async function(){
   }
 };
 
-// SECRET 화면은 한 화면에 마니또와 오늘의 미션이 최대한 함께 보이도록 압축한다.
 const mailboxTabSecret=secret;
 secret=async function(){
   await mailboxTabSecret();
@@ -76,7 +75,6 @@ secret=async function(){
   if(cards[0])cards[0].classList.add('secret-person-card');
 };
 
-// ME에서는 프로필/로그아웃 + 받은 익명 메시지함만 유지한다.
 const mailboxTabMe=me;
 me=async function(){
   await mailboxTabMe();
