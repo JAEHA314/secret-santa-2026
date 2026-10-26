@@ -121,9 +121,7 @@ function editSharedSetting(type){
 
 me=async function(){
   const u=person(state.user);
-  let messages=[];
-  try{messages=await loadSecretMessages()}catch(e){console.warn(e)}
-  $('#app').innerHTML=shell(`<section class="card"><div class="reveal">${visual(u,'reveal-img')}</div><h2 style="text-align:center">${u.name}</h2><button id="logout" class="secondary">로그아웃</button></section>${secretInboxHtml(messages)}`);
+  $('#app').innerHTML=shell(`<section class="card"><div class="reveal">${visual(u,'reveal-img')}</div><h2 style="text-align:center">${u.name}</h2><button id="logout" class="secondary">로그아웃</button></section>`);
   bindNav();
   $('#logout').onclick=()=>{state.user=null;save();render()};
 };
