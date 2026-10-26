@@ -4,43 +4,44 @@
 .shell .shared-header .brand{width:auto;max-width:none;margin:0;text-align:left;min-width:0;flex:0 1 auto}
 .shell .brand .club-name{margin:0 0 0 2px;font-size:12px;line-height:1.05}
 .shell .brand h1{margin:1px 0 0;font-size:25px;line-height:1.02;white-space:nowrap}
-.shell .shared-user-tools{display:flex;align-items:flex-end;gap:6px;align-self:flex-end;flex:0 0 auto;transform:translateY(-5px)}
-.shell .shared-profile-link{border:0;background:transparent;padding:0;margin:0;display:flex;align-items:flex-end;gap:5px;flex:0 0 auto;font:inherit;color:inherit;cursor:pointer}
-.shell .shared-greeting{display:flex;align-items:baseline;gap:3px;white-space:nowrap;margin:0 0 1px}
-.shell .shared-greeting small{font-size:11px}
-.shell .shared-greeting b{font-size:16px;line-height:1.1}
-.shell .shared-avatar{display:block;line-height:0}
-.shell .shared-avatar .avatar-img{width:43px;height:43px;object-fit:contain}
-.shell .shared-inbox-link{position:relative;border:0;background:transparent;padding:0 1px 1px;margin:0;min-width:31px;height:43px;display:flex;align-items:center;justify-content:center;font-size:21px;line-height:1;cursor:pointer}
+.shell .shared-user-tools{display:flex;align-items:center;gap:6px;align-self:center;flex:0 0 auto;transform:none}
+.shell .shared-profile-link{border:0;background:transparent;padding:0;margin:0;display:flex;align-items:center;gap:5px;flex:0 0 auto;font:inherit;color:inherit;cursor:pointer}
+.shell .shared-greeting{display:flex;align-items:center;gap:3px;white-space:nowrap;margin:0}
+.shell .shared-greeting small{font-size:11px;line-height:1}
+.shell .shared-greeting b{font-size:16px;line-height:1}
+.shell .shared-avatar{width:43px;height:43px;display:flex;align-items:center;justify-content:center;line-height:0;overflow:visible}
+.shell .shared-avatar .avatar-img{display:block;width:43px;height:43px;object-fit:contain;object-position:center center}
+/* The dog face artwork has a little more transparent space underneath than the others. */
+.shell .shared-avatar .avatar-img[src*="dog-face"]{transform:translateY(4px)}
+.shell .shared-inbox-link{position:relative;border:0;background:transparent;padding:0 1px;margin:0;min-width:31px;height:43px;display:flex;align-items:center;justify-content:center;font-size:21px;line-height:1;cursor:pointer}
 .shell .shared-inbox-count{position:absolute;right:-3px;top:0;min-width:17px;height:17px;padding:0 4px;border-radius:99px;background:var(--red);color:white;font-size:10px;line-height:17px;text-align:center;font-weight:800}
 .home-layout.shell>.top{display:none}
 
-/* HOME is one edge-to-edge Christmas scene. The room image continues behind the title. */
+/* HOME: framed tree scene, with the complete 9:16 artwork visible. */
 body:has(.tree-home){overflow:hidden}
-body:has(.tree-home) .nav{bottom:max(8px,env(safe-area-inset-bottom));width:min(448px,calc(100% - 24px));border:1px solid rgba(222,213,200,.7);border-radius:22px;background:rgba(255,253,248,.88);box-shadow:0 6px 24px rgba(71,51,31,.12);backdrop-filter:blur(16px);-webkit-backdrop-filter:blur(16px);padding:7px 4px}
-.tree-home.shell{height:100dvh;min-height:0;max-width:480px;padding:0!important;display:block;overflow:hidden;background:#f6e2ca}
-.tree-home .shared-header{position:absolute;z-index:20;top:max(18px,env(safe-area-inset-top));left:20px;right:20px;margin:0;padding:0;align-items:flex-end}
-.tree-home .shared-header .brand,.tree-home .shared-user-tools{position:relative;z-index:1}
-.tree-home .hero{position:absolute;inset:0;overflow:hidden;padding:0!important;margin:0!important;border:0!important;border-radius:0!important;background:transparent!important;box-shadow:none!important}
-.tree-home .hero>.shared-tree-wrap{height:100%;margin:0}
+body:has(.tree-home) .nav{bottom:max(8px,env(safe-area-inset-bottom));width:min(448px,calc(100% - 24px));border:1px solid rgba(222,213,200,.7);border-radius:22px;background:rgba(255,253,248,.9);box-shadow:0 6px 24px rgba(71,51,31,.12);backdrop-filter:blur(16px);-webkit-backdrop-filter:blur(16px);padding:7px 4px}
+.tree-home.shell{height:100dvh;min-height:0;max-width:480px;padding:22px 20px calc(86px + env(safe-area-inset-bottom));display:flex;flex-direction:column;overflow:hidden;background:var(--paper)}
+.tree-home .shared-header{position:relative;z-index:20;flex:0 0 auto;margin:8px 0 12px;padding:0;align-items:center}
+.tree-home .hero{position:relative;flex:1 1 auto;min-height:0;overflow:hidden;padding:0!important;margin:0!important;border:0!important;border-radius:18px!important;background:transparent!important;box-shadow:none!important;display:flex;justify-content:center;align-items:flex-start}
+.tree-home .hero>.shared-tree-wrap{width:100%;height:100%;margin:0}
 .tree-home-hidden{display:none!important}
 .shared-tree-wrap{width:100%;height:100%}
-.shared-tree-canvas{position:relative;width:100%;height:100%;overflow:hidden;background:#f6e2ca;border-radius:0}
-.shared-tree-canvas>img.shared-tree-bg,.shared-tree-canvas>img.shared-tree-layer{position:absolute;inset:0;width:100%;height:100%;display:block;object-fit:cover;pointer-events:none;user-select:none}
+.shared-tree-canvas{position:relative;width:100%;height:100%;overflow:hidden;background:#f6e2ca;border-radius:18px}
+.shared-tree-canvas>img.shared-tree-bg,.shared-tree-canvas>img.shared-tree-layer{position:absolute;inset:0;width:100%;height:100%;display:block;object-fit:contain;object-position:center center;pointer-events:none;user-select:none}
 .shared-tree-bg{z-index:0}
 .shared-tree-base{z-index:1}
 .shared-tree-layer{z-index:2}
 
-.tree-board-link{position:absolute;z-index:8;left:2.5%;top:14.5%;width:31%;padding:0;border:0;background:transparent;cursor:pointer;filter:drop-shadow(0 2px 2px rgba(70,38,20,.08))}
+.tree-board-link{position:absolute;z-index:8;left:2.5%;top:1.5%;width:31%;padding:0;border:0;background:transparent;cursor:pointer;filter:drop-shadow(0 2px 2px rgba(70,38,20,.08))}
 .tree-board-link img{display:block;width:100%;height:auto;pointer-events:none}
-.tree-status{position:absolute;z-index:8;left:5%;top:31%;display:flex;flex-direction:column;align-items:flex-start;color:#18130f;text-shadow:0 1px 0 rgba(255,255,255,.2);line-height:1.18}
-.tree-status div{font-size:clamp(11px,3.1vw,15px);font-weight:700;margin-bottom:10px}
+.tree-status{position:absolute;z-index:8;left:5%;top:22%;display:flex;flex-direction:column;align-items:flex-start;color:#18130f;text-shadow:0 1px 0 rgba(255,255,255,.2);line-height:1.18}
+.tree-status div{font-size:clamp(11px,3.1vw,15px);font-weight:700;margin-bottom:8px}
 .tree-status div b{font-size:1.16em}
 .tree-status strong{font-size:clamp(27px,8vw,40px);line-height:1;font-weight:900;letter-spacing:-1px}
 .tree-status span{font-size:clamp(11px,3.4vw,16px);font-weight:650;margin-top:2px}
 
-/* All face PNGs occupy an identical visual box; crown is anchored to that box, not image artwork bounds. */
-.tree-race{position:absolute;z-index:9;left:3%;right:3%;bottom:calc(82px + env(safe-area-inset-bottom));display:grid;grid-template-columns:repeat(6,minmax(0,1fr));align-items:end;gap:2px}
+/* Mission faces stay inside the artwork, above the bottom edge. */
+.tree-race{position:absolute;z-index:9;left:3%;right:3%;bottom:2.2%;display:grid;grid-template-columns:repeat(6,minmax(0,1fr));align-items:end;gap:2px}
 .tree-racer{position:relative;min-width:0;height:55px;text-align:center;display:grid;grid-template-rows:39px 13px;justify-items:center;align-items:end}
 .tree-racer img{display:block;width:38px;height:38px;object-fit:contain;object-position:center bottom;filter:drop-shadow(0 1px 1px rgba(70,38,20,.08))}
 .tree-racer b{font-size:9px;line-height:13px;color:#211812;align-self:start}
@@ -52,16 +53,18 @@ body:has(.tree-home) .nav{bottom:max(8px,env(safe-area-inset-bottom));width:min(
 @media(max-width:380px){
   .shell .brand h1{font-size:22px}
   .shell .shared-header{gap:5px}
-  .shell .shared-user-tools{gap:4px;transform:translateY(-5px)}
+  .shell .shared-user-tools{gap:4px}
   .shell .shared-profile-link{margin:0;gap:4px}
   .shell .shared-greeting small{font-size:10px}
   .shell .shared-greeting b{font-size:14px}
+  .shell .shared-avatar{width:39px;height:39px}
   .shell .shared-avatar .avatar-img{width:39px;height:39px}
   .shell .shared-inbox-link{min-width:28px;height:39px;font-size:19px}
-  .tree-home .shared-header{left:16px;right:16px}
+  .tree-home.shell{padding:18px 16px calc(82px + env(safe-area-inset-bottom))}
+  .tree-home .shared-header{margin:7px 0 10px}
   .tree-board-link{width:30%}
-  .tree-status{top:30.5%}
-  .tree-race{left:2%;right:2%;bottom:calc(78px + env(safe-area-inset-bottom));gap:0}
+  .tree-status{top:21.5%}
+  .tree-race{left:2%;right:2%;bottom:2%;gap:0}
   .tree-racer{height:50px;grid-template-rows:35px 12px}
   .tree-racer img{width:34px;height:34px}
   .tree-racer b{font-size:8px;line-height:12px}
