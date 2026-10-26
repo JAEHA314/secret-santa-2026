@@ -33,10 +33,8 @@ async function loadSharedTreeCompleted(){
 
 const treeProgressBaseHome=home;
 home=async function(){
-  // The legacy home renders first because several older modules wrap home(). Hide it
-  // immediately, then replace the entire hero instead of replacing only the old tree emoji.
-  const pending=document.querySelector('#app main');
-  if(pending)pending.classList.add('page-loading');
+  // Clear the previous route before any legacy async wrappers start drawing.
+  if(state.user){const app=$('#app');if(app)app.innerHTML=shell(`<section class="route-placeholder" aria-busy="true"></section>`)}
   await treeProgressBaseHome();
   const hero=document.querySelector('.hero');
   const main=document.querySelector('#app main');
@@ -44,7 +42,6 @@ home=async function(){
   main.classList.add('tree-home','page-loading');
   let completed=0,counts=[];
   try{[completed,counts]=await Promise.all([loadSharedTreeCompleted(),missionCounts()])}catch(e){console.warn('tree home',e);counts=PEOPLE.map(p=>({person:p,count:0}))}
-  // Important: remove the legacy D-day/description from the old hero as well.
   hero.innerHTML=sharedTreeHtml(completed,counts);
   Array.from(main.children).forEach(el=>{
     if(el.classList.contains('shared-header')||el===hero)return;
@@ -55,13 +52,13 @@ home=async function(){
   main.classList.remove('page-loading');
 };
 
-// Never leave the previous tab visible while an async page is loading.
-// A neutral shell is shown immediately; the destination page replaces it when ready.
+// Clear the old route synchronously on every bottom-nav transition. Keeping shell()
+// here preserves the common header/nav, so no legacy page can flash while data loads.
 const treeProgressBaseRender=render;
 render=function(page='home'){
   if(state.user){
     const app=$('#app');
-    if(app)app.innerHTML=`<main class="shell route-loading" aria-busy="true"><div class="route-loading-dot">·</div></main>`;
+    if(app)app.innerHTML=shell(`<section class="route-placeholder" aria-busy="true"></section>`);
   }
   return treeProgressBaseRender(page);
 };
