@@ -1,0 +1,49 @@
+/* Final viewport/layout corrections */
+
+/* HOME tree uses the same horizontal width as cards on the other tabs. */
+.tree-home .hero{width:100%;align-items:flex-start}
+.tree-home .hero>.shared-tree-wrap{width:100%;max-width:none;height:auto;aspect-ratio:9/16;margin:0}
+.tree-status div{margin-bottom:13px}
+.tree-status strong{margin-top:0}
+.tree-date-edit{margin-top:1px}
+
+/* Lower the three face drawings whose transparent artwork sits high in its PNG canvas. */
+.tree-racer-dog img,.tree-racer-frog img,.tree-racer-cat img{transform:translateY(4px) scale(1.06)}
+.tree-race{bottom:1.25%}
+
+/* Wishlist list: fill the available viewport, but keep every rounded corner above nav. */
+.wish-page.shell{padding-bottom:82px;display:flex;flex-direction:column}
+.wish-page .shared-header{flex:0 0 auto}
+.wish-page .wish-list-card{flex:1 1 auto;min-height:0;margin:4px 0 0!important;padding:18px!important;display:flex;flex-direction:column;overflow:hidden}
+.wish-page .wish-title-row{display:flex;align-items:center;justify-content:flex-start;gap:10px;margin:0}
+.wish-page .wish-title-row h2{margin:0;white-space:nowrap}
+.wish-page .wish-gift-limit{border:0;border-radius:999px;background:#f1eadf;padding:7px 10px;font:inherit;font-size:11px;color:#6e655c;white-space:nowrap;cursor:pointer}
+.wish-page .wish-gift-limit b{font-size:12px;color:#4f4943}
+.wish-page .wish-intro{margin:8px 0 10px;font-size:12px}
+.wish-page .wish-people{flex:1 1 auto;min-height:0;display:grid;grid-template-columns:1fr 1fr;grid-template-rows:repeat(3,minmax(0,1fr));gap:8px;margin:0}
+.wish-page .wish-person{min-height:0;height:auto;padding:6px;border-radius:16px;display:flex;flex-direction:column;align-items:center;justify-content:center}
+.wish-page .wish-person>span{height:auto;min-height:0;margin:0 0 2px}
+.wish-page .wish-thumb{width:66px;height:66px;object-fit:contain}
+
+/* Wishlist detail/edit: all card corners and action buttons remain visible. */
+.wish-detail-page.shell{padding-bottom:82px;display:flex;flex-direction:column}
+.wish-detail-page .shared-header{flex:0 0 auto}
+.wish-detail-page .text-back{flex:0 0 auto;margin:0 0 6px}
+.wish-detail-page .wish-detail{flex:1 1 auto;min-height:0;margin:0!important;padding:14px 18px!important;display:flex;flex-direction:column;overflow:hidden}
+.wish-detail-page .wish-profile{flex:0 0 auto;margin:0 0 7px}
+.wish-detail-page .wish-face{min-height:78px;margin:0}
+.wish-detail-page .wish-detail-img{width:100px;height:100px}
+.wish-detail-page .wish-profile h2{margin:0 0 5px}
+.wish-detail-page .wish-section{flex:1 1 0;min-height:0;padding:12px;margin:5px 0;border-radius:16px;overflow:auto}
+.wish-detail-page #edit-wish{flex:0 0 auto;margin-top:7px}
+.wish-detail-page .wish-editing label{flex:0 0 auto;margin:4px 0}
+.wish-detail-page .wish-editing .wish-textarea{flex:1 1 0;min-height:0;height:auto;margin:2px 0 5px;resize:none}
+.wish-detail-page .wish-edit-actions{flex:0 0 auto;display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:5px}
+.wish-detail-page .wish-edit-actions button{margin:0}
+
+@media(max-width:380px){
+  .tree-racer-dog img,.tree-racer-frog img,.tree-racer-cat img{transform:translateY(3px) scale(1.05)}
+  .wish-page .wish-list-card{padding:15px!important}
+  .wish-page .wish-thumb{width:58px;height:58px}
+  .wish-page .wish-gift-limit{padding:6px 8px;font-size:10px}
+}
