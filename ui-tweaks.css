@@ -1,45 +1,77 @@
+/* Shared geometry: keep the logged-in header in exactly the HOME position on every route. */
+.shell:not(.login-shell){padding-top:24px!important}
+.shell:not(.login-shell) .shared-header{height:52px!important;min-height:52px!important;margin:8px 0 12px!important;padding:0!important;align-items:center!important;flex:0 0 52px!important}
+.shell:not(.login-shell) .shared-header .brand{margin:0!important}
+
+/* Bottom navigation: floating translucent rounded bar on every logged-in page. */
+.nav{bottom:calc(10px + env(safe-area-inset-bottom))!important;width:min(456px,calc(100% - 24px))!important;border:1px solid rgba(222,213,200,.82)!important;border-radius:22px!important;background:rgba(255,253,248,.76)!important;-webkit-backdrop-filter:blur(16px) saturate(1.15)!important;backdrop-filter:blur(16px) saturate(1.15)!important;box-shadow:0 8px 28px rgba(75,57,36,.12)!important;padding:7px 4px!important;overflow:hidden;z-index:100}
+.nav button{padding:5px 0 4px!important}
+
 /* Tree footer alignment */
 .tree-race{bottom:.7%!important}
 .tree-racer{height:58px!important;grid-template-rows:42px 13px!important}
 .tree-racer img{width:40px!important;height:40px!important;object-position:center bottom!important}
-.tree-racer-dog img,.tree-racer-frog img,.tree-racer-cat img{width:45px!important;height:45px!important}
+.tree-racer-dog img{width:48px!important;height:48px!important}
+.tree-racer-frog img,.tree-racer-cat img{width:45px!important;height:45px!important}
 .tree-racer b{line-height:13px!important}
+.tree-crown{top:-7px!important}
 .tree-date-edit{border:0;background:transparent;padding:0;margin:2px 0 0;color:inherit;font:inherit;font-size:clamp(10px,3vw,15px);font-weight:650;line-height:1.15;text-align:left;text-decoration:underline;text-decoration-color:rgba(24,19,15,.28);text-underline-offset:2px;cursor:pointer}
 
-/* Wishlist: use the available viewport instead of leaving a large empty lower half. */
-.wish-page.shell{display:flex;flex-direction:column;padding-bottom:76px!important}
-.wish-page .shared-header{flex:0 0 auto}
-.wish-page .wish-list-card{flex:1 1 auto;min-height:0;margin:8px 0!important;padding:22px 18px 18px!important;display:flex;flex-direction:column}
-.wish-title-row{flex:0 0 auto}
-.wish-title-row h2{margin:0 0 9px;font-size:25px}
-.wish-title-row p{margin:0 0 10px}
-.wish-gift-limit{display:flex;align-items:center;gap:5px;width:max-content;max-width:100%;border:0;background:#f1eadf;border-radius:10px;padding:7px 10px;margin:0 0 10px;color:#777066;font-size:11px;text-align:left}
-.wish-gift-limit b{color:var(--ink);font-size:13px}.wish-gift-limit span{font-size:10px;color:#9a9185}
-.wish-page .wish-people{flex:1 1 auto;min-height:0;margin-top:0!important;grid-template-rows:repeat(3,minmax(0,1fr));gap:9px!important}
-.wish-page .wish-person{height:100%;min-height:0;padding:8px 6px!important;display:flex;flex-direction:column;align-items:center;justify-content:center}
+/* Wishlist list: reserve space for the floating nav so the third row is fully visible. */
+.wish-page.shell{display:flex;flex-direction:column;padding-bottom:94px!important}
+.wish-page .shared-header{flex:0 0 52px!important}
+.wish-page .wish-list-card{flex:1 1 auto;min-height:0;margin:0!important;padding:18px 18px 14px!important;display:flex;flex-direction:column}
+.wish-title-row{flex:0 0 auto;display:flex!important;align-items:flex-start!important;justify-content:space-between!important;gap:8px!important;flex-wrap:wrap}
+.wish-title-row h2{margin:0;font-size:25px;line-height:1.1}
+.wish-title-row p{order:3;flex:0 0 100%;margin:0 0 8px;font-size:11px}
+.wish-gift-limit{display:flex;align-items:center;gap:5px;width:max-content;max-width:100%;border:0;background:#f1eadf;border-radius:10px;padding:6px 9px;margin:0;color:#777066;font-size:10px;text-align:left;white-space:nowrap}
+.wish-gift-limit b{color:var(--ink);font-size:12px}.wish-gift-limit span{display:none!important}
+.wish-page .wish-people{flex:1 1 auto;min-height:0;margin-top:0!important;grid-template-rows:repeat(3,minmax(0,1fr));gap:8px!important}
+.wish-page .wish-person{height:100%;min-height:0;padding:5px 6px!important;display:flex;flex-direction:column;align-items:center;justify-content:center}
 .wish-page .wish-person>span{height:auto!important;min-height:0;flex:1 1 auto;margin:0!important;align-items:center}
-.wish-page .wish-thumb{width:min(78px,18vw)!important;height:min(78px,18vw)!important}
+.wish-page .wish-thumb{width:min(72px,17vw)!important;height:min(72px,17vw)!important}
 .wish-page .wish-person>b{flex:0 0 auto}
 
-/* Wishlist detail/edit: everything, including Cancel, stays above the fixed nav. */
-.wish-detail-page.shell{display:flex;flex-direction:column;padding-bottom:76px!important}
+/* Wishlist detail/edit: keep the whole card and its action buttons above the floating nav. */
+.wish-detail-page.shell{display:flex;flex-direction:column;padding-bottom:94px!important}
 .wish-detail-page .shared-header,.wish-detail-page>.text-back{flex:0 0 auto}
-.wish-detail-page .wish-detail{flex:1 1 auto;min-height:0;display:flex;flex-direction:column;margin:5px 0!important;padding:15px 18px!important}
-.wish-detail-page .wish-profile{flex:0 0 auto;margin-bottom:8px!important}
-.wish-detail-page .wish-face{min-height:90px!important;height:90px!important;margin-bottom:2px!important}
-.wish-detail-page .wish-detail-img{width:108px!important;height:108px!important}
-.wish-detail-page .wish-profile h2{font-size:21px}
-.wish-detail-page .wish-section{flex:1 1 0;min-height:0;padding:12px!important;margin:6px 0!important;overflow:hidden}
-.wish-detail-page .wish-editing label{display:block;flex:0 0 auto;font-size:13px;font-weight:650;margin:5px 0 2px}
-.wish-detail-page .wish-editing .wish-textarea{flex:1 1 0;min-height:62px;height:auto;resize:none;margin:2px 0 4px;padding:10px 12px}
-.wish-edit-actions{display:grid;grid-template-columns:1fr 1fr;gap:8px;flex:0 0 auto;margin-top:3px}
-.wish-edit-actions button{margin:0;padding:11px}
+.wish-detail-page>.text-back{margin:0 0 4px!important;padding:0 2px!important;line-height:20px}
+.wish-detail-page .wish-detail{flex:1 1 auto;min-height:0;display:flex;flex-direction:column;margin:0!important;padding:12px 18px!important}
+.wish-detail-page .wish-profile{flex:0 0 auto;margin-bottom:5px!important}
+.wish-detail-page .wish-face{min-height:78px!important;height:78px!important;margin-bottom:0!important}
+.wish-detail-page .wish-detail-img{width:96px!important;height:96px!important}
+.wish-detail-page .wish-profile h2{font-size:20px}
+.wish-detail-page .wish-section{flex:1 1 0;min-height:0;padding:11px!important;margin:5px 0!important;overflow:hidden}
+.wish-detail-page .wish-editing label{display:block;flex:0 0 auto;font-size:13px;font-weight:650;margin:4px 0 1px}
+.wish-detail-page .wish-editing .wish-textarea{flex:1 1 0;min-height:48px;height:auto;resize:none;margin:1px 0 3px;padding:9px 11px}
+.wish-edit-actions{display:grid;grid-template-columns:1fr 1fr;gap:8px;flex:0 0 auto;margin-top:2px}
+.wish-edit-actions button{margin:0;padding:10px}
 
 /* Personal page */
 .personal-home-back{display:block;margin:-4px 0 8px!important}
 
+/* Login: one-screen layout, no scrolling even after the PIN controls open. */
+body:has(.login-page){overflow:hidden!important}
+.login-page.shell{height:100dvh!important;min-height:0!important;overflow:hidden!important;padding:18px 20px calc(18px + env(safe-area-inset-bottom))!important;display:flex!important;flex-direction:column!important}
+.login-page .brand{flex:0 0 auto;margin:2px 0 16px!important;transform:translateY(-4px)}
+.login-page .brand .club-name{font-size:12px!important;margin-bottom:1px!important}
+.login-page .brand h1{font-size:27px!important;line-height:1!important}
+.login-page>.card{flex:1 1 auto;min-height:0;margin:0!important;padding:18px!important;display:flex;flex-direction:column;overflow:hidden}
+.login-page>.card>h2{flex:0 0 auto;margin:0 0 12px;font-size:23px}
+.login-page .characters{flex:1 1 auto;min-height:0;grid-template-rows:repeat(3,minmax(0,1fr));gap:9px}
+.login-page .character{height:100%;min-height:0;padding:7px 7px!important;display:flex;flex-direction:column;justify-content:center;align-items:center}
+.login-page .character .face{height:auto!important;min-height:0;flex:1 1 auto;margin:0!important}
+.login-page .character-img{width:min(68px,17vw)!important;height:min(68px,17vw)!important}
+.login-page .character b{flex:0 0 auto;font-size:14px}
+.login-page #pinbox{flex:0 0 auto;margin-top:9px}
+.login-page #pinbox .field{height:46px;margin:0 0 7px;padding:10px 13px}
+.login-page #pinbox .primary{height:46px;margin:0;padding:10px}
+.login-page #pinbox .small{font-size:10px;line-height:1.2;margin:6px 0 0}
+
 @media(max-height:760px){
-  .tree-race{bottom:.4%!important}.tree-racer{height:52px!important;grid-template-rows:37px 12px!important}.tree-racer img{width:35px!important;height:35px!important}.tree-racer-dog img,.tree-racer-frog img,.tree-racer-cat img{width:40px!important;height:40px!important}
-  .wish-page .wish-list-card{padding:15px!important}.wish-title-row h2{font-size:22px;margin-bottom:5px}.wish-title-row p{font-size:11px;margin-bottom:6px}.wish-gift-limit{padding:5px 8px;margin-bottom:6px}.wish-page .wish-people{gap:6px!important}.wish-page .wish-thumb{width:58px!important;height:58px!important}
-  .wish-detail-page .wish-face{min-height:68px!important;height:68px!important}.wish-detail-page .wish-detail-img{width:82px!important;height:82px!important}.wish-detail-page .wish-profile{margin-bottom:4px!important}.wish-detail-page .wish-editing .wish-textarea{min-height:48px}.wish-edit-actions button{padding:9px}
+  .tree-race{bottom:.4%!important}.tree-racer{height:52px!important;grid-template-rows:37px 12px!important}.tree-racer img{width:35px!important;height:35px!important}.tree-racer-dog img{width:43px!important;height:43px!important}.tree-racer-frog img,.tree-racer-cat img{width:40px!important;height:40px!important}.tree-crown{top:-6px!important}
+  .wish-page.shell,.wish-detail-page.shell{padding-bottom:88px!important}
+  .wish-page .wish-list-card{padding:12px 14px 10px!important}.wish-title-row h2{font-size:21px}.wish-title-row p{font-size:10px;margin-bottom:5px}.wish-gift-limit{padding:4px 7px}.wish-page .wish-people{gap:5px!important}.wish-page .wish-thumb{width:54px!important;height:54px!important}
+  .wish-detail-page .wish-face{min-height:58px!important;height:58px!important}.wish-detail-page .wish-detail-img{width:72px!important;height:72px!important}.wish-detail-page .wish-profile{margin-bottom:2px!important}.wish-detail-page .wish-editing .wish-textarea{min-height:38px}.wish-edit-actions button{padding:8px}
+  .login-page.shell{padding-top:10px!important}.login-page .brand{margin:0 0 9px!important}.login-page>.card{padding:13px 15px!important}.login-page>.card>h2{font-size:20px;margin-bottom:7px}.login-page .characters{gap:6px}.login-page .character-img{width:54px!important;height:54px!important}.login-page #pinbox{margin-top:6px}.login-page #pinbox .field,.login-page #pinbox .primary{height:40px}
 }
