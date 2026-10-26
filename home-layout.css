@@ -1,17 +1,17 @@
 /* Shared Secret Santa header */
 .shell{position:relative}
-.shell .shared-header{display:flex;align-items:flex-start;justify-content:space-between;gap:12px;margin:14px 0 26px}
-.shell .shared-header .brand{width:auto;max-width:none;margin:0;text-align:left;min-width:0}
+.shell .shared-header{display:flex;align-items:flex-start;justify-content:space-between;gap:8px;margin:14px 0 26px}
+.shell .shared-header .brand{width:auto;max-width:none;margin:0;text-align:left;min-width:0;flex:0 1 auto}
 .shell .brand .club-name{margin:0 0 0 2px;font-size:12px;line-height:1.05}
-.shell .brand h1{margin:1px 0 0;font-size:27px;line-height:1.02}
-.shell .shared-user-tools{display:flex;align-items:flex-end;gap:9px;align-self:flex-end;flex:0 0 auto;transform:translateY(-5px)}
-.shell .shared-profile-link{border:0;background:transparent;padding:0;margin:0;display:flex;align-items:flex-end;gap:7px;flex:0 0 auto;font:inherit;color:inherit;cursor:pointer}
-.shell .shared-greeting{display:flex;align-items:baseline;gap:4px;white-space:nowrap;margin:0 0 1px}
-.shell .shared-greeting small{font-size:12px}
-.shell .shared-greeting b{font-size:18px;line-height:1.1}
+.shell .brand h1{margin:1px 0 0;font-size:25px;line-height:1.02;white-space:nowrap}
+.shell .shared-user-tools{display:flex;align-items:flex-end;gap:6px;align-self:flex-end;flex:0 0 auto;transform:translateY(-5px)}
+.shell .shared-profile-link{border:0;background:transparent;padding:0;margin:0;display:flex;align-items:flex-end;gap:5px;flex:0 0 auto;font:inherit;color:inherit;cursor:pointer}
+.shell .shared-greeting{display:flex;align-items:baseline;gap:3px;white-space:nowrap;margin:0 0 1px}
+.shell .shared-greeting small{font-size:11px}
+.shell .shared-greeting b{font-size:16px;line-height:1.1}
 .shell .shared-avatar{display:block;line-height:0}
-.shell .shared-avatar .avatar-img{width:48px;height:48px;object-fit:contain}
-.shell .shared-inbox-link{position:relative;border:0;background:transparent;padding:0 2px 1px;margin:0;min-width:34px;height:48px;display:flex;align-items:center;justify-content:center;font-size:23px;line-height:1;cursor:pointer}
+.shell .shared-avatar .avatar-img{width:43px;height:43px;object-fit:contain}
+.shell .shared-inbox-link{position:relative;border:0;background:transparent;padding:0 1px 1px;margin:0;min-width:31px;height:43px;display:flex;align-items:center;justify-content:center;font-size:21px;line-height:1;cursor:pointer}
 .shell .shared-inbox-count{position:absolute;right:-3px;top:0;min-width:17px;height:17px;padding:0 4px;border-radius:99px;background:var(--red);color:white;font-size:10px;line-height:17px;text-align:center;font-weight:800}
 .home-layout.shell>.top{display:none}
 
@@ -31,31 +31,36 @@ body:has(.tree-home){overflow:hidden}
 
 .tree-board-link{position:absolute;z-index:8;left:1.5%;top:1.5%;width:34%;padding:0;border:0;background:transparent;cursor:pointer;filter:drop-shadow(0 2px 2px rgba(70,38,20,.08))}
 .tree-board-link img{display:block;width:100%;height:auto;pointer-events:none}
-.tree-status{position:absolute;z-index:8;left:5%;top:20%;display:flex;flex-direction:column;align-items:flex-start;color:#18130f;text-shadow:0 1px 0 rgba(255,255,255,.2);line-height:1.22}
-.tree-status div{font-size:clamp(11px,3.1vw,15px);font-weight:700;margin-bottom:13px}
+/* Keep the mission copy clear of the hanging board. */
+.tree-status{position:absolute;z-index:8;left:5%;top:22.5%;display:flex;flex-direction:column;align-items:flex-start;color:#18130f;text-shadow:0 1px 0 rgba(255,255,255,.2);line-height:1.18}
+.tree-status div{font-size:clamp(11px,3.1vw,15px);font-weight:700;margin-bottom:11px}
 .tree-status div b{font-size:1.16em}
 .tree-status strong{font-size:clamp(27px,8vw,40px);line-height:1;font-weight:900;letter-spacing:-1px}
-.tree-status span{font-size:clamp(11px,3.4vw,16px);font-weight:650;margin-top:7px}
+.tree-status span{font-size:clamp(11px,3.4vw,16px);font-weight:650;margin-top:3px}
 
-.tree-race{position:absolute;z-index:9;left:2.5%;right:2.5%;bottom:1.5%;display:grid;grid-template-columns:repeat(6,1fr);align-items:end;gap:2px}
-.tree-racer{position:relative;min-width:0;text-align:center;display:flex;flex-direction:column;align-items:center}
-.tree-racer img{display:block;width:min(12vw,50px);height:min(12vw,50px);object-fit:contain;filter:drop-shadow(0 1px 1px rgba(70,38,20,.08))}
-.tree-racer b{font-size:clamp(9px,2.7vw,12px);line-height:1;margin-top:1px;color:#211812}
-.tree-crown{height:17px;font-size:16px;line-height:17px;margin-bottom:-2px}
+/* Faces sit safely above the fixed tab bar. Crown is anchored to the face itself. */
+.tree-race{position:absolute;z-index:9;left:3%;right:3%;bottom:3.6%;display:grid;grid-template-columns:repeat(6,1fr);align-items:end;gap:1px}
+.tree-racer{position:relative;min-width:0;text-align:center;display:flex;flex-direction:column;align-items:center;padding-top:14px}
+.tree-racer img{display:block;width:min(10vw,42px);height:min(10vw,42px);object-fit:contain;filter:drop-shadow(0 1px 1px rgba(70,38,20,.08))}
+.tree-racer b{font-size:clamp(8px,2.35vw,11px);line-height:1;margin-top:1px;color:#211812}
+.tree-crown{position:absolute;top:-1px;left:50%;transform:translateX(-50%);height:16px;font-size:15px;line-height:16px;margin:0;pointer-events:none}
 
 /* Personal page already shows the member prominently, so don't repeat only the profile shortcut. */
 .personal-page .shared-profile-link{display:none}
 
 @media(max-width:380px){
-  .shell .brand h1{font-size:24px}
-  .shell .shared-header{gap:7px}
-  .shell .shared-user-tools{gap:5px;transform:translateY(-5px)}
-  .shell .shared-profile-link{margin:0;gap:5px}
-  .shell .shared-greeting small{font-size:11px}
-  .shell .shared-greeting b{font-size:16px}
-  .shell .shared-avatar .avatar-img{width:43px;height:43px}
-  .shell .shared-inbox-link{min-width:30px;height:43px;font-size:21px}
+  .shell .brand h1{font-size:22px}
+  .shell .shared-header{gap:5px}
+  .shell .shared-user-tools{gap:4px;transform:translateY(-5px)}
+  .shell .shared-profile-link{margin:0;gap:4px}
+  .shell .shared-greeting small{font-size:10px}
+  .shell .shared-greeting b{font-size:14px}
+  .shell .shared-avatar .avatar-img{width:39px;height:39px}
+  .shell .shared-inbox-link{min-width:28px;height:39px;font-size:19px}
   .tree-board-link{width:32%}
-  .tree-status{top:19%}
-  .tree-racer img{width:40px;height:40px}
+  .tree-status{top:22%}
+  .tree-race{bottom:4%}
+  .tree-racer{padding-top:13px}
+  .tree-racer img{width:34px;height:34px}
+  .tree-crown{font-size:14px;line-height:14px}
 }
