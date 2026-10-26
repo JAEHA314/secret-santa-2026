@@ -1,4 +1,4 @@
-// Full-screen shared Christmas tree home. Every 10 completed missions unlocks one layer.
+// Shared Christmas tree home. Every 10 completed missions unlocks one layer.
 const TREE_TOTAL_MISSIONS=150;
 const TREE_STAGE_SIZE=10;
 const TREE_LAYERS=['tree-light.png','tree-ribbon.png','tree-socks.png','tree-ball1.png','tree-gift1.png','tree-cookie.png','tree-snow.png','tree-candy.png','tree-ball3.png','tree-ball2.png','tree-house.png','tree-letter.png','tree-bell.png','tree-gift2.png','tree-star.png'];
@@ -33,19 +33,35 @@ async function loadSharedTreeCompleted(){
 
 const treeProgressBaseHome=home;
 home=async function(){
+  // The legacy home renders first because several older modules wrap home(). Hide it
+  // immediately, then replace the entire hero instead of replacing only the old tree emoji.
+  const pending=document.querySelector('#app main');
+  if(pending)pending.classList.add('page-loading');
   await treeProgressBaseHome();
   const hero=document.querySelector('.hero');
   const main=document.querySelector('#app main');
   if(!hero||!main)return;
+  main.classList.add('tree-home','page-loading');
   let completed=0,counts=[];
   try{[completed,counts]=await Promise.all([loadSharedTreeCompleted(),missionCounts()])}catch(e){console.warn('tree home',e);counts=PEOPLE.map(p=>({person:p,count:0}))}
-  const oldTree=hero.querySelector('.tree');
-  if(oldTree)oldTree.outerHTML=sharedTreeHtml(completed,counts);
-  main.classList.add('tree-home');
+  // Important: remove the legacy D-day/description from the old hero as well.
+  hero.innerHTML=sharedTreeHtml(completed,counts);
   Array.from(main.children).forEach(el=>{
     if(el.classList.contains('shared-header')||el===hero)return;
     el.classList.add('tree-home-hidden');
   });
   const boardLink=document.querySelector('.tree-board-link');
   if(boardLink&&typeof boardPage==='function')boardLink.onclick=boardPage;
+  main.classList.remove('page-loading');
+};
+
+// Never leave the previous tab visible while an async page is loading.
+// A neutral shell is shown immediately; the destination page replaces it when ready.
+const treeProgressBaseRender=render;
+render=function(page='home'){
+  if(state.user){
+    const app=$('#app');
+    if(app)app.innerHTML=`<main class="shell route-loading" aria-busy="true"><div class="route-loading-dot">·</div></main>`;
+  }
+  return treeProgressBaseRender(page);
 };
