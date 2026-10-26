@@ -15,16 +15,20 @@
 .shell .shared-inbox-count{position:absolute;right:-3px;top:0;min-width:17px;height:17px;padding:0 4px;border-radius:99px;background:var(--red);color:white;font-size:10px;line-height:17px;text-align:center;font-weight:800}
 .home-layout.shell>.top{display:none}
 
-/* Async route transition: never flash the previous page. */
-.route-loading{min-height:100dvh;padding:0;background:var(--paper)}
-.route-loading-dot{height:1px;overflow:hidden;opacity:0}
+/* Route transition */
+.route-placeholder{height:1px;min-height:1px;margin:0;padding:0;border:0;opacity:0;overflow:hidden}
 .page-loading{visibility:hidden}
 
-/* HOME: title stays outside; the complete 9:16 artwork sits in one rounded frame. */
-body:has(.tree-home){overflow:hidden}
-body:has(.tree-home) .nav{bottom:max(8px,env(safe-area-inset-bottom));width:min(448px,calc(100% - 24px));border:1px solid rgba(222,213,200,.7);border-radius:22px;background:rgba(255,253,248,.9);box-shadow:0 6px 24px rgba(71,51,31,.12);backdrop-filter:blur(16px);-webkit-backdrop-filter:blur(16px);padding:7px 4px}
-.tree-home.shell{height:100dvh;min-height:0;max-width:480px;padding:22px 20px calc(86px + env(safe-area-inset-bottom));display:flex;flex-direction:column;overflow:hidden;background:var(--paper)}
-.tree-home .shared-header{position:relative;z-index:20;flex:0 0 auto;margin:8px 0 12px;padding:0;align-items:center}
+/* One identical rectangular bottom bar on every main tab. */
+.nav{bottom:0!important;width:min(480px,100%)!important;border:0!important;border-top:1px solid var(--line)!important;border-radius:0!important;background:#fffdf8ef!important;box-shadow:none!important;backdrop-filter:blur(12px)!important;-webkit-backdrop-filter:blur(12px)!important;padding:8px 4px calc(8px + env(safe-area-inset-bottom))!important}
+
+/* Main tabs are app screens rather than document pages. */
+body:has(.mailbox-page),body:has(.secret-page),body:has(.wish-page),body:has(.tree-home){overflow:hidden}
+.mailbox-page.shell,.secret-page.shell,.wish-page.shell{height:100dvh;min-height:0;overflow:hidden}
+
+/* HOME: title outside; complete 9:16 artwork in one rounded frame. */
+.tree-home.shell{height:100dvh;min-height:0;max-width:480px;padding:24px 20px calc(76px + env(safe-area-inset-bottom));display:flex;flex-direction:column;overflow:hidden;background:var(--paper)}
+.tree-home .shared-header{position:relative;z-index:20;flex:0 0 auto;margin:10px 0 12px;padding:0;align-items:center}
 .tree-home .hero{position:relative;flex:1 1 auto;min-height:0;overflow:visible;padding:0!important;margin:0!important;border:0!important;background:transparent!important;box-shadow:none!important;display:flex;justify-content:center;align-items:flex-start}
 .tree-home .hero>.shared-tree-wrap{height:100%;width:auto;max-width:100%;aspect-ratio:9/16;margin:0 auto}
 .tree-home-hidden{display:none!important}
@@ -34,7 +38,6 @@ body:has(.tree-home) .nav{bottom:max(8px,env(safe-area-inset-bottom));width:min(
 .shared-tree-bg{z-index:0}
 .shared-tree-base{z-index:1}
 .shared-tree-layer{z-index:2}
-
 .tree-board-link{position:absolute;z-index:8;left:2.5%;top:1.5%;width:31%;padding:0;border:0;background:transparent;cursor:pointer;filter:drop-shadow(0 2px 2px rgba(70,38,20,.08))}
 .tree-board-link img{display:block;width:100%;height:auto;pointer-events:none}
 .tree-status{position:absolute;z-index:8;left:5%;top:22%;display:flex;flex-direction:column;align-items:flex-start;color:#18130f;text-shadow:0 1px 0 rgba(255,255,255,.2);line-height:1.18}
@@ -42,12 +45,18 @@ body:has(.tree-home) .nav{bottom:max(8px,env(safe-area-inset-bottom));width:min(
 .tree-status div b{font-size:1.16em}
 .tree-status strong{font-size:clamp(26px,7.5vw,38px);line-height:1;font-weight:900;letter-spacing:-1px}
 .tree-status span{font-size:clamp(10px,3vw,15px);font-weight:650;margin-top:2px}
-
 .tree-race{position:absolute;z-index:9;left:3%;right:3%;bottom:2.2%;display:grid;grid-template-columns:repeat(6,minmax(0,1fr));align-items:end;gap:2px}
 .tree-racer{position:relative;min-width:0;height:55px;text-align:center;display:grid;grid-template-rows:39px 13px;justify-items:center;align-items:end}
 .tree-racer img{display:block;width:38px;height:38px;object-fit:contain;object-position:center bottom;filter:drop-shadow(0 1px 1px rgba(70,38,20,.08))}
 .tree-racer b{font-size:9px;line-height:13px;color:#211812;align-self:start}
 .tree-crown{position:absolute;z-index:2;top:-14px;left:50%;transform:translateX(-50%);width:22px;height:20px;font-size:18px;line-height:20px;text-align:center;margin:0;pointer-events:none}
+
+/* MAIL composer */
+.mailbox-page .compose-card>p:first-of-type{display:none}
+.mailbox-page .free-send-actions{grid-template-columns:1fr 1fr!important;gap:8px}
+.mailbox-page .free-send-actions button{width:100%;height:58px;margin:0;padding:8px 6px!important;display:flex;align-items:center;justify-content:center;line-height:1.25}
+.mailbox-page .free-message-button{background:var(--green)!important;color:white!important}
+.mailbox-page .free-mailbox-button{background:var(--red)!important;color:white!important}
 
 .personal-page .shared-profile-link{display:none}
 
@@ -61,8 +70,8 @@ body:has(.tree-home) .nav{bottom:max(8px,env(safe-area-inset-bottom));width:min(
   .shell .shared-avatar{width:39px;height:39px}
   .shell .shared-avatar .avatar-img{width:39px;height:39px}
   .shell .shared-inbox-link{min-width:28px;height:39px;font-size:19px}
-  .tree-home.shell{padding:18px 16px calc(82px + env(safe-area-inset-bottom))}
-  .tree-home .shared-header{margin:7px 0 10px}
+  .tree-home.shell{padding:20px 16px calc(74px + env(safe-area-inset-bottom))}
+  .tree-home .shared-header{margin:9px 0 10px}
   .tree-board-link{width:30%}
   .tree-status{top:21.5%}
   .tree-race{left:2%;right:2%;bottom:2%;gap:0}
