@@ -1,5 +1,6 @@
 const BOARD_MISSION_IDS=[18,19,20,21,22];
-async function loadBoardPosts(){const r=await fetch(`${SUPABASE_URL}/rest/v1/board_posts?select=id,player_id,mission_id,content,created_at&order=created_at.desc`,{headers:apiHeaders});if(!r.ok)throw new Error('board load');return r.json()}
+const MOOD_PREFIX='[[MOOD]]';
+async function loadBoardPosts(){const r=await fetch(`${SUPABASE_URL}/rest/v1/board_posts?select=id,player_id,mission_id,content,created_at&order=created_at.desc`,{headers:apiHeaders});if(!r.ok)throw new Error('board load');const rows=await r.json();return rows.filter(x=>!String(x.content||'').startsWith(MOOD_PREFIX))}
 async function createBoardPost(content,missionId=null){const payload={player_id:state.user,content};if(missionId)payload.mission_id=missionId;const r=await fetch(`${SUPABASE_URL}/rest/v1/board_posts`,{method:'POST',headers:apiHeaders,body:JSON.stringify(payload)});if(!r.ok)throw new Error('board post')}
 async function deleteFreeBoardPost(id){const r=await fetch(`${SUPABASE_URL}/rest/v1/board_posts?id=eq.${encodeURIComponent(id)}&player_id=eq.${encodeURIComponent(state.user)}&mission_id=is.null`,{method:'DELETE',headers:apiHeaders});if(!r.ok)throw new Error('board delete')}
 function boardMissionTitle(id){if(id==null)return '자유롭게 남긴 이야기';const m=MISSIONS.find(x=>x.id===Number(id));return m?m.title:'무무클럽 이야기'}
