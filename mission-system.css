@@ -1,0 +1,9 @@
+/* Mission-system + pending mobile refinements */
+.tree-level{margin-bottom:15px!important}
+.secret-inbox-page.shell{padding-bottom:18px!important}
+.secret-inbox-page>#shared-inbox-back{align-self:flex-start!important;width:auto!important;text-align:left!important;margin:0 0 10px!important}
+.secret-inbox-page~.nav{display:none!important}
+.nav{bottom:calc(env(safe-area-inset-bottom) - 12px)!important;background:rgba(255,253,248,.52)!important}
+.board-compose-card>div>.mission-kicker{display:none!important}
+.admin-mission-list{display:grid;gap:12px;margin-top:14px}.admin-mission-row{display:grid;grid-template-columns:44px 1fr 1fr;gap:7px;padding:12px 0;border-bottom:1px solid var(--line)}.admin-mission-row>b{align-self:center}.admin-mission-row input,.admin-mission-row select,.admin-mission-row textarea{width:100%;min-width:0;border:1px solid var(--line);border-radius:10px;background:white;padding:9px;color:var(--ink);font:inherit}.admin-mission-row [data-f="action"],.admin-mission-row [data-f="record_label"],.admin-mission-row [data-f="notice"],.admin-mission-row button{grid-column:1/-1}.admin-mission-row textarea{min-height:58px;resize:vertical}.mission-admin{margin-bottom:20px}
+@media(max-width:380px){.nav{bottom:calc(env(safe-area-inset-bottom) - 13px)!important}}
