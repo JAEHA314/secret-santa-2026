@@ -18,7 +18,7 @@ render=function(page='home'){
 };
 
 function mailboxSummaryHtml(total){
-  return `<section class="card mailbox-summary"><div class="mission-head"><div><span class="mission-kicker">MOOMOO MAILBOX</span><h2>무무클럽 우체통</h2></div><div class="mailbox-icon" aria-hidden="true">📮</div></div><div class="mailbox-total"><b>${total}통</b><span>지금까지 모인 편지</span></div><p class="muted">연말 파티 전까지 편지는 봉인되어 있어.</p></section>`;
+  return `<section class="card mailbox-summary"><span class="mission-kicker">MOOMOO MAILBOX</span><h2>무무클럽 우체통</h2><div class="mailbox-hero" aria-label="지금까지 모인 편지 ${total}통"><span class="mailbox-hero-icon" aria-hidden="true">📮</span><b class="mailbox-hero-badge">${total}</b></div><p class="mailbox-summary-label">지금까지 모인 편지</p><p class="muted">연말 파티 전까지 편지는 봉인되어 있어.</p></section>`;
 }
 
 async function mailboxPage(){
@@ -28,7 +28,7 @@ async function mailboxPage(){
   }
   let box={total:0,mine:[]};
   try{box=await loadMailboxCounts()}catch(e){console.warn(e)}
-  const summary=mailboxSummaryHtml(box.total).replace('</section>',`<p class="muted mailbox-my-count" style="text-align:center">내가 넣은 편지 <b>${box.mine.length}통</b></p></section>`);
+  const summary=mailboxSummaryHtml(box.total).replace('</section>',`<p class="muted mailbox-my-count">내가 넣은 편지 <b>${box.mine.length}통</b></p></section>`);
   $('#app').innerHTML=shell(`${summary}${freeSendHtml()}`);
   const main=document.querySelector('main');
   if(main)main.classList.add('mailbox-page');
