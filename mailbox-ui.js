@@ -2,8 +2,9 @@ const mailboxBaseHome=home;
 const mailboxBaseMe=me;
 const mailboxBaseSecret=secret;
 
-function mailboxSummaryHtml(total){
-  return `<section class="card mailbox-summary"><div class="mission-head"><div><span class="mission-kicker">MOOMOO MAILBOX</span><h2>무무클럽 우체통</h2></div></div><div style="font-size:44px;text-align:center;margin:12px 0">📮</div><p class="muted" style="text-align:center">지금까지 ${total}통의 편지가 도착했어요.</p></section>`;
+function mailboxSummaryHtml(total,mineCount=null){
+  const mine=mineCount==null?'':`<p class="muted mailbox-my-count" style="text-align:center">내가 넣은 편지 <b>${mineCount}통</b></p>`;
+  return `<section class="card mailbox-summary"><div class="mission-head"><div><span class="mission-kicker">MOOMOO MAILBOX</span><h2>무무클럽 우체통</h2></div></div><div style="font-size:44px;text-align:center;margin:12px 0">📮</div><p class="muted" style="text-align:center">지금까지 <b>${total}통</b>의 편지가 도착했어요.</p><p class="muted mailbox-party-note" style="text-align:center">연말 파티 날 다 같이 열어볼 수 있어요.</p>${mine}</section>`;
 }
 
 home=async function(){
@@ -11,7 +12,7 @@ home=async function(){
   let box={total:0,mine:[]};
   try{box=await loadMailboxCounts()}catch(e){console.warn(e)}
   const stats=document.querySelector('.stats');
-  if(stats)stats.insertAdjacentHTML('beforebegin',mailboxSummaryHtml(box.total));
+  if(stats)stats.insertAdjacentHTML('beforebegin',mailboxSummaryHtml(box.total,box.mine.length));
 };
 
 me=async function(){
