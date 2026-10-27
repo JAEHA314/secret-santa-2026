@@ -1,0 +1,63 @@
+// Party-day mode: activates automatically on the shared party_date (KST).
+function partyKstDate(){return new Intl.DateTimeFormat('en-CA',{timeZone:'Asia/Seoul',year:'numeric',month:'2-digit',day:'2-digit'}).format(new Date())}
+function isPartyDay(){return Boolean(state.dDay)&&partyKstDate()===state.dDay}
+async function loadPartyState(){
+  const [gr,rr]=await Promise.all([
+    fetch(`${SUPABASE_URL}/rest/v1/party_guesses?select=player_id,guessed_giver_id,confirmed_at`,{headers:apiHeaders}),
+    fetch(`${SUPABASE_URL}/rest/v1/party_reveals?select=player_id,revealed_at&order=revealed_at.asc`,{headers:apiHeaders})
+  ]);
+  if(!gr.ok||!rr.ok)throw new Error('party state load');
+  return {guesses:await gr.json(),reveals:await rr.json()}
+}
+function partyActualGiver(playerId){if(!state.assignments)return null;return Object.keys(state.assignments).find(giver=>state.assignments[giver]===playerId)||null}
+async function savePartyGuess(guessedGiverId){
+  const r=await fetch(`${SUPABASE_URL}/rest/v1/party_guesses`,{method:'POST',headers:{...apiHeaders,Prefer:'resolution=merge-duplicates,return=representation'},body:JSON.stringify({player_id:state.user,guessed_giver_id:guessedGiverId,confirmed_at:new Date().toISOString()})});
+  if(!r.ok)throw new Error('party guess save');return r.json()
+}
+async function savePartyReveal(playerId){
+  const r=await fetch(`${SUPABASE_URL}/rest/v1/party_reveals`,{method:'POST',headers:{...apiHeaders,Prefer:'resolution=merge-duplicates,return=representation'},body:JSON.stringify({player_id:playerId,revealed_at:new Date().toISOString()})});
+  if(!r.ok)throw new Error('party reveal save');return r.json()
+}
+function partyGuessCard(current){
+  if(current){const guessed=person(current.guessed_giver_id);return `<section class="card party-guess-card"><span class="mission-kicker">WHO'S MY SECRET SANTA?</span><h2>내 예상 마니또</h2><div class="party-picked">${visual(guessed,'party-face')}<b>${esc(guessed.name)}</b></div><p class="muted">예상은 확정됐어. 실제 공개 때 정답을 확인할 수 있어.</p></section>`}
+  const choices=PEOPLE.filter(p=>p.id!==state.user).map(p=>`<button class="party-person-choice" type="button" data-party-guess="${p.id}">${visual(p,'party-face')}<b>${esc(p.name)}</b></button>`).join('');
+  return `<section class="card party-guess-card"><span class="mission-kicker">WHO'S MY SECRET SANTA?</span><h2>누가 나를 뽑았을까?</h2><p class="muted">한 번 확정하면 바꿀 수 없어.</p><div class="party-person-grid">${choices}</div></section>`
+}
+async function partyGuessPage(){
+  let party={guesses:[],reveals:[]};try{party=await loadPartyState()}catch(e){console.warn(e)}
+  const mine=party.guesses.find(x=>x.player_id===state.user);
+  $('#app').innerHTML=shell(`<button class="text-back" id="party-guess-back" type="button">‹ HOME으로</button>${partyGuessCard(mine)}`);
+  bindNav();$('#party-guess-back').onclick=()=>render('home');
+  document.querySelectorAll('[data-party-guess]').forEach(button=>button.onclick=async()=>{const p=person(button.dataset.partyGuess);if(!confirm(`${p.name}(으)로 예상할까? 확정 후에는 바꿀 수 없어.`))return;document.querySelectorAll('[data-party-guess]').forEach(x=>x.disabled=true);try{await savePartyGuess(p.id);partyGuessPage()}catch(e){console.error(e);alert('예상을 저장하지 못했어. 다시 시도해줘.');partyGuessPage()}})
+}
+function partyRevealStatusHtml(party){
+  const revealed=new Set(party.reveals.map(x=>x.player_id));
+  return `<div class="party-reveal-status"><b>${revealed.size} / ${PEOPLE.length} 공개 완료</b><div class="party-reveal-dots">${PEOPLE.map(p=>`<span class="${revealed.has(p.id)?'done':''}">${visual(p,'party-status-face')}</span>`).join('')}</div></div>`
+}
+async function partyRevealPage(){
+  try{await loadGame()}catch(e){console.warn(e)}
+  let party;try{party=await loadPartyState()}catch(e){console.error(e);return alert('공개 상태를 불러오지 못했어.')}
+  const revealed=new Set(party.reveals.map(x=>x.player_id));
+  const cards=PEOPLE.map(p=>`<button class="party-reveal-person ${revealed.has(p.id)?'revealed':''}" type="button" data-party-reveal="${p.id}" ${revealed.has(p.id)?'disabled':''}>${visual(p,'party-reveal-face')}<b>${esc(p.name)}</b><small>${revealed.has(p.id)?'공개 완료':'선택'}</small></button>`).join('');
+  $('#app').innerHTML=shell(`<button class="text-back" id="party-reveal-back" type="button">‹ HOME으로</button><section class="card party-reveal-card"><span class="mission-kicker">SECRET SANTA REVEAL</span><h2>마니또 공개</h2>${partyRevealStatusHtml(party)}<div class="party-person-grid">${cards}</div></section>`);
+  bindNav();$('#party-reveal-back').onclick=()=>render('home');
+  document.querySelectorAll('[data-party-reveal]').forEach(button=>button.onclick=()=>partyRevealPin(button.dataset.partyReveal))
+}
+async function partyRevealPin(playerId){
+  const p=person(playerId);const pin=prompt(`${p.name}의 4자리 PIN을 입력해줘.`);if(pin===null)return;
+  try{await loadPins()}catch(e){return alert('PIN을 확인하지 못했어.')}
+  if(state.pins[playerId]!==pin.trim())return alert('PIN이 달라!');
+  if(!confirm(`${p.name}의 마니또를 지금 공개할까? 공개하면 되돌릴 수 없어.`))return;
+  const receiver=state.assignments&&person(state.assignments[playerId]);if(!receiver)return alert('마니또 배정 정보를 찾지 못했어.');
+  try{await savePartyReveal(playerId)}catch(e){console.error(e);return alert('공개 상태를 저장하지 못했어.')}
+  const party=await loadPartyState();const guess=party.guesses.find(x=>x.player_id===receiver.id);const actualGiver=playerId;const guessLine=guess?`<p class="party-answer ${guess.guessed_giver_id===actualGiver?'correct':'wrong'}">${esc(receiver.name)}의 예상은 ${guess.guessed_giver_id===actualGiver?'정답!':'아쉽게도 오답!'}</p>`:'';
+  $('#app').innerHTML=shell(`<section class="card party-result-card"><span class="mission-kicker">SECRET SANTA REVEAL</span><h2>${esc(p.name)}의 마니또는</h2><div class="party-reveal-pair">${visual(p,'party-result-face')}<span>→</span>${visual(receiver,'party-result-face')}</div><strong>${esc(receiver.name)}!</strong>${guessLine}<button class="primary" id="party-reveal-next" type="button">계속 공개하기</button></section>`,false);$('#party-reveal-next').onclick=partyRevealPage
+}
+async function partyHomeControls(){
+  if(!isPartyDay())return '';
+  let party={guesses:[],reveals:[]};try{party=await loadPartyState()}catch(e){console.warn(e)}
+  const mine=party.guesses.find(x=>x.player_id===state.user);const allDone=party.reveals.length>=PEOPLE.length;
+  return `<section class="card party-home-card"><span class="mission-kicker">PARTY DAY</span><h2>오늘은 마니또 공개 날!</h2><div class="party-home-actions"><button class="secondary" type="button" data-party-action="guess">${mine?'내 예상 확인':'내 마니또 예상하기'}</button><button class="primary" type="button" data-party-action="reveal">마니또 공개하기</button></div>${allDone?'<p class="party-unlocked">6/6 공개 완료 · 익명 콘텐츠의 봉인이 풀렸어.</p>':''}</section>`
+}
+function bindPartyHome(){document.querySelectorAll('[data-party-action]').forEach(b=>b.onclick=()=>b.dataset.partyAction==='guess'?partyGuessPage():partyRevealPage())}
+async function partyContentUnlocked(){if(!isPartyDay())return false;try{const p=await loadPartyState();return p.reveals.length>=PEOPLE.length}catch(e){return false}}
