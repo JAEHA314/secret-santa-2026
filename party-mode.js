@@ -11,11 +11,11 @@ async function loadPartyState(){
 }
 function partyActualGiver(playerId){if(!state.assignments)return null;return Object.keys(state.assignments).find(giver=>state.assignments[giver]===playerId)||null}
 async function savePartyGuess(guessedGiverId){
-  const r=await fetch(`${SUPABASE_URL}/rest/v1/party_guesses`,{method:'POST',headers:{...apiHeaders,Prefer:'resolution=merge-duplicates,return=representation'},body:JSON.stringify({player_id:state.user,guessed_giver_id:guessedGiverId,confirmed_at:new Date().toISOString()})});
+  const r=await fetch(`${SUPABASE_URL}/rest/v1/party_guesses`,{method:'POST',headers:{...apiHeaders,Prefer:'return=representation'},body:JSON.stringify({player_id:state.user,guessed_giver_id:guessedGiverId,confirmed_at:new Date().toISOString()})});
   if(!r.ok)throw new Error('party guess save');return r.json()
 }
 async function savePartyReveal(playerId){
-  const r=await fetch(`${SUPABASE_URL}/rest/v1/party_reveals`,{method:'POST',headers:{...apiHeaders,Prefer:'resolution=merge-duplicates,return=representation'},body:JSON.stringify({player_id:playerId,revealed_at:new Date().toISOString()})});
+  const r=await fetch(`${SUPABASE_URL}/rest/v1/party_reveals`,{method:'POST',headers:{...apiHeaders,Prefer:'return=representation'},body:JSON.stringify({player_id:playerId,revealed_at:new Date().toISOString()})});
   if(!r.ok)throw new Error('party reveal save');return r.json()
 }
 function partyGuessCard(current){
@@ -28,7 +28,7 @@ async function partyGuessPage(){
   const mine=party.guesses.find(x=>x.player_id===state.user);
   $('#app').innerHTML=shell(`<button class="text-back" id="party-guess-back" type="button">‹ HOME으로</button>${partyGuessCard(mine)}`);
   bindNav();$('#party-guess-back').onclick=()=>render('home');
-  document.querySelectorAll('[data-party-guess]').forEach(button=>button.onclick=async()=>{const p=person(button.dataset.partyGuess);if(!confirm(`${p.name}(으)로 예상할까? 확정 후에는 바꿀 수 없어.`))return;document.querySelectorAll('[data-party-guess]').forEach(x=>x.disabled=true);try{await savePartyGuess(p.id);partyGuessPage()}catch(e){console.error(e);alert('예상을 저장하지 못했어. 다시 시도해줘.');partyGuessPage()}})
+  document.querySelectorAll('[data-party-guess]').forEach(button=>button.onclick=async()=>{const p=person(button.dataset.partyGuess);if(!confirm(`${p.name}(으)로 예상할까? 확정 후에는 바꿀 수 없어.`))return;document.querySelectorAll('[data-party-guess]').forEach(x=>x.disabled=true);try{await savePartyGuess(p.id);partyGuessPage()}catch(e){console.error(e);alert('예상을 저장하지 못했어. 이미 확정했거나 잠시 오류가 생겼어.');partyGuessPage()}})
 }
 function partyRevealStatusHtml(party){
   const revealed=new Set(party.reveals.map(x=>x.player_id));
@@ -49,7 +49,7 @@ async function partyRevealPin(playerId){
   if(state.pins[playerId]!==pin.trim())return alert('PIN이 달라!');
   if(!confirm(`${p.name}의 마니또를 지금 공개할까? 공개하면 되돌릴 수 없어.`))return;
   const receiver=state.assignments&&person(state.assignments[playerId]);if(!receiver)return alert('마니또 배정 정보를 찾지 못했어.');
-  try{await savePartyReveal(playerId)}catch(e){console.error(e);return alert('공개 상태를 저장하지 못했어.')}
+  try{await savePartyReveal(playerId)}catch(e){console.error(e);return alert('공개 상태를 저장하지 못했어. 이미 공개됐거나 잠시 오류가 생겼어.')}
   const party=await loadPartyState();const guess=party.guesses.find(x=>x.player_id===receiver.id);const actualGiver=playerId;const guessLine=guess?`<p class="party-answer ${guess.guessed_giver_id===actualGiver?'correct':'wrong'}">${esc(receiver.name)}의 예상은 ${guess.guessed_giver_id===actualGiver?'정답!':'아쉽게도 오답!'}</p>`:'';
   $('#app').innerHTML=shell(`<section class="card party-result-card"><span class="mission-kicker">SECRET SANTA REVEAL</span><h2>${esc(p.name)}의 마니또는</h2><div class="party-reveal-pair">${visual(p,'party-result-face')}<span>→</span>${visual(receiver,'party-result-face')}</div><strong>${esc(receiver.name)}!</strong>${guessLine}<button class="primary" id="party-reveal-next" type="button">계속 공개하기</button></section>`,false);$('#party-reveal-next').onclick=partyRevealPage
 }
