@@ -23,6 +23,9 @@ function mailboxSummaryHtml(total){
 
 async function mailboxPage(){
   $('#app').innerHTML=shell(`<div class="route-placeholder" aria-hidden="true"></div>`);
+  if(typeof partyContentUnlocked==='function'&&await partyContentUnlocked()){
+    try{const rows=await loadAllMailboxLetters();$('#app').innerHTML=shell(partyMailboxHtml(rows));const main=document.querySelector('main');if(main)main.classList.add('mailbox-page','party-mailbox-page');bindNav();return}catch(e){console.warn('party mailbox',e)}
+  }
   let box={total:0,mine:[]};
   try{box=await loadMailboxCounts()}catch(e){console.warn(e)}
   const summary=mailboxSummaryHtml(box.total).replace('</section>',`<p class="muted mailbox-my-count" style="text-align:center">내가 넣은 편지 <b>${box.mine.length}통</b></p></section>`);
