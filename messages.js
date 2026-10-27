@@ -5,11 +5,6 @@ function secretInboxHtml(messages){return `<section class="card"><div class="mis
 const originalMissionPrompt=missionPrompt;
 missionPrompt=function(m){if(m.type==='message')return '내용을 적어 보내면 마니또에게 익명으로 전달되고 미션이 자동 완료돼.';return originalMissionPrompt(m)};
 
-// Compatibility placeholders only. The real HOME and SECRET renderers are installed later.
-// Keeping these blank prevents any obsolete screen from ever being painted during script setup.
-home=async function(){};
-secret=async function(){};
-
 function editSharedSetting(type){const isDate=type==='date';const ok=confirm(`⚠️ ${isDate?'연말 파티 날짜':'선물 상한 금액'}를 수정할까요?\n\n여기서 변경하면 나뿐 아니라 무무클럽 모두에게 똑같이 적용돼요.`);if(!ok)return;const title=isDate?'연말 파티 날짜 수정':'선물 상한 수정';const input=isDate?`<input id="shared-setting-value" class="field" type="date" value="${esc(state.dDay)}">`:`<input id="shared-setting-value" class="field" type="number" min="0" step="1000" value="${Number(state.giftLimit)||0}">`;$('#app').innerHTML=shell(`<section class="card"><h2>${title}</h2><p class="muted">⚠️ 저장하면 이 설정은 모든 멤버에게 변경돼요.</p>${input}<button id="save-shared-setting" class="primary">모두에게 적용</button><button id="cancel-shared-setting" class="secondary">취소</button></section>`);const main=$('#app .shell');if(main)main.classList.add('shared-setting-page');bindNav();$('#cancel-shared-setting').onclick=()=>render(isDate?'home':'wish');$('#save-shared-setting').onclick=async()=>{const value=$('#shared-setting-value').value;if(isDate&&!value)return alert('날짜를 선택해줘.');const nextDate=isDate?value:state.dDay;const nextGift=isDate?state.giftLimit:Math.max(0,Number(value)||0);if(!confirm('이 변경은 모든 멤버에게 바로 적용돼요.\n저장할까요?'))return;try{await saveSharedSettings(nextDate,nextGift);alert('모두에게 적용했어!');render(isDate?'home':'wish')}catch(e){alert('저장하지 못했어. 다시 시도해줘.')}}}
 
 me=async function(){const u=person(state.user);$('#app').innerHTML=shell(`<section class="card"><div class="reveal">${visual(u,'reveal-img')}</div><h2 style="text-align:center">${u.name}</h2><button id="logout" class="secondary">로그아웃</button></section>`);bindNav();$('#logout').onclick=()=>{state.user=null;save();render()}};
