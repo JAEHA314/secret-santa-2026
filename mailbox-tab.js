@@ -17,6 +17,10 @@ render=function(page='home'){
   return mailboxTabBaseRender(page);
 };
 
+function mailboxSummaryHtml(total){
+  return `<section class="card mailbox-summary"><div class="mission-head"><div><span class="mission-kicker">MOOMOO MAILBOX</span><h2>무무클럽 우체통</h2></div><div class="mailbox-icon" aria-hidden="true">📮</div></div><div class="mailbox-total"><b>${total}통</b><span>지금까지 모인 편지</span></div><p class="muted">연말 파티 전까지 편지는 봉인되어 있어.</p></section>`;
+}
+
 async function mailboxPage(){
   $('#app').innerHTML=shell(`<div class="route-placeholder" aria-hidden="true"></div>`);
   let box={total:0,mine:[]};
