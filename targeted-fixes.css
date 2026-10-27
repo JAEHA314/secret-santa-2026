@@ -1,0 +1,14 @@
+/* Targeted UI corrections pending the second structural stylesheet split. */
+.tree-racer-rabbit img{width:40px!important;height:40px!important;transform:translateY(0)!important}
+.personal-page .personal-profile-card{padding-top:11px!important;padding-bottom:11px!important}
+.personal-page .personal-identity{width:210px!important;height:90px!important;margin:0 auto 2px!important}
+.personal-page .personal-avatar{position:absolute!important;left:50%!important;top:50%!important;transform:translate(-72%,-50%)!important}
+.personal-page .personal-mood-bubble{left:118px!important;top:15px!important}
+.personal-page .personal-profile-card h2{margin:3px 0 0!important;line-height:1.1!important}
+.personal-page .mission-calendar-head h2{font-size:14px!important}
+.secret-inbox-page.shell{padding-top:14px!important}
+.secret-inbox-page .shared-header{margin:8px 0 16px!important;display:flex!important;align-items:center!important;justify-content:space-between!important;width:100%!important;text-align:left!important}
+.secret-inbox-page .shared-header .brand{margin:0!important;text-align:left!important}
+.secret-inbox-page .shared-user-tools{display:flex!important}
+.secret-inbox-page #shared-inbox-back{margin-top:0!important;margin-bottom:8px!important}
+@media(max-width:380px){.tree-racer-rabbit img{width:36px!important;height:36px!important;transform:translateY(0)!important}.personal-page .personal-identity{width:196px!important}.personal-page .personal-mood-bubble{left:110px!important}}
