@@ -49,38 +49,3 @@ function bindMailboxCompose(refresh){
     try{await sendFreeMailboxLetter(value);alert('편지를 우체통에 넣었어! 연말 파티 날 다시 만나자.');refresh()}catch(e){mailboxButton.disabled=false;alert('편지를 넣지 못했어. 다시 시도해줘.')}
   };
 }
-
-const mailboxTabHome=home;
-home=async function(){
-  await mailboxTabHome();
-  const card=[...document.querySelectorAll('.mailbox-summary')];
-  card.forEach(x=>x.remove());
-  const avatar=document.querySelector('.top .avatar');
-  if(avatar){
-    avatar.setAttribute('role','button');
-    avatar.setAttribute('tabindex','0');
-    avatar.setAttribute('aria-label','내 화면 열기');
-    avatar.style.cursor='pointer';
-    avatar.onclick=()=>render('me');
-    avatar.onkeydown=e=>{if(e.key==='Enter'||e.key===' '){e.preventDefault();render('me')}};
-  }
-};
-
-const mailboxTabSecret=secret;
-secret=async function(){
-  await mailboxTabSecret();
-  const main=document.querySelector('main');
-  if(main)main.classList.add('secret-page');
-  const cards=[...document.querySelectorAll('main .card')];
-  if(cards[0])cards[0].classList.add('secret-person-card');
-};
-
-const mailboxTabMe=me;
-me=async function(){
-  await mailboxTabMe();
-  const cards=[...document.querySelectorAll('main .card')];
-  const compose=cards.find(card=>card.querySelector('#free-send-text'));
-  if(compose)compose.remove();
-  const mailboxCard=cards.find(card=>card.textContent.includes('나의 우체통')||card.textContent.includes('SEALED MAILBOX'));
-  if(mailboxCard)mailboxCard.remove();
-};
