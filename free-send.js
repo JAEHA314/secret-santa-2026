@@ -1,9 +1,16 @@
+const FREE_MAILBOX_MARKER='[[FREE_MAILBOX:';
+function encodeFreeMailboxMessage(message,receiverId){
+  const audience=receiverId==='all'?'everyone':receiverId;
+  return `${FREE_MAILBOX_MARKER}${audience}]]${message}`;
+}
+
 async function sendFreeMailboxLetter(message,receiverId='all'){
   const toEveryone=receiverId==='all';
   const receiver=toEveryone?state.user:receiverId;
   if(!receiver||(!toEveryone&&!PEOPLE.some(p=>p.id===receiver)))throw new Error('invalid receiver');
-  const r=await fetch(`${SUPABASE_URL}/rest/v1/mailbox_letters`,{method:'POST',headers:apiHeaders,body:JSON.stringify({sender_id:state.user,receiver_id:receiver,mission_id:null,message})});
-  if(!r.ok)throw new Error('mailbox send');
+  const storedMessage=encodeFreeMailboxMessage(message,receiverId);
+  const r=await fetch(`${SUPABASE_URL}/rest/v1/mailbox_letters`,{method:'POST',headers:apiHeaders,body:JSON.stringify({sender_id:state.user,receiver_id:receiver,mission_id:15,message:storedMessage})});
+  if(!r.ok){let detail='';try{detail=await r.text()}catch(e){}throw new Error(`mailbox send ${r.status} ${detail}`)}
 }
 
 function freeMailboxRecipientPickerHtml(){
