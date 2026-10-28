@@ -1,6 +1,6 @@
 const mailboxTabBaseShell=shell;
-const mailboxTabBaseRender=render;
 
+// Extend only the shared shell. Route dispatch is owned by navigation.js.
 shell=function(body,nav=true){
   if(!nav)return mailboxTabBaseShell(body,false);
   const html=mailboxTabBaseShell(body,true);
@@ -9,12 +9,6 @@ shell=function(body,nav=true){
     .replace('<button data-go="secret"><b>✦</b>SECRET</button>','<button data-go="mailbox"><b>✉️</b>MAIL</button><button data-go="secret"><b>🎅</b>SECRET</button>')
     .replace('<button data-go="wish"><b>♡</b>WISH</button>','<button data-go="wish"><b>❤️</b>WISH</button>')
     .replace('<button data-go="me"><b>☺</b>ME</button>','');
-};
-
-render=function(page='home'){
-  if(!state.user)return login();
-  if(page==='mailbox')return mailboxPage();
-  return mailboxTabBaseRender(page);
 };
 
 function mailboxSummaryHtml(total){
@@ -78,8 +72,6 @@ function bindMailboxCompose(refresh){
     if(mailboxButton)mailboxButton.disabled=true;
     try{await sendFreeMailboxLetter(value,receiverId,anonymous);closePicker();alert(`${recipientLabel}에게 보낼 ${anonymous?'익명 ':''}편지를 우체통에 넣었어!`);refresh()}catch(e){console.error(e);sending=false;document.querySelectorAll('[data-mailbox-recipient]').forEach(x=>x.disabled=false);if(mailboxButton)mailboxButton.disabled=false;alert('편지를 넣지 못했어. 다시 시도해줘.')}
   };
-  // Native click is the single authoritative activation path. A separate pointerup
-  // handler used to compete with global touch handling and could fire twice.
   document.querySelectorAll('[data-mailbox-recipient]').forEach(button=>{
     button.onclick=()=>chooseRecipient(button);
   });
