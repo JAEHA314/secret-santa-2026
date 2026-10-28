@@ -1,0 +1,25 @@
+/* Global touch normalization: make every interactive control react on the first tap. */
+button,
+a[href],
+[role="button"],
+input,
+textarea,
+select,
+label {
+  touch-action: manipulation;
+  -webkit-tap-highlight-color: transparent;
+}
+
+button,
+a[href],
+[role="button"] {
+  -webkit-user-select: none;
+  user-select: none;
+}
+
+/* Images inside buttons must not become a competing touch target on iOS. */
+button img,
+a[href] img,
+[role="button"] img {
+  pointer-events: none;
+}
