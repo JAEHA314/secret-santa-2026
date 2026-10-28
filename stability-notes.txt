@@ -1,0 +1,20 @@
+PRE-RELEASE STABILITY AUDIT — 2026-10-28
+
+Goal: preserve the exact current UI/features while removing interaction instability.
+
+High-confidence interaction fixes applied:
+- Removed global pointerup -> synthetic .click() conversion from navigation.js.
+- Kept delegated native click routing for rerender-safe navigation.
+- Removed duplicate recipient pointer/click paths in mailbox compose.
+- Removed duplicate pointerup/click split from HOME mood bubbles; native click + keyboard activation remains.
+- Removed redundant route/bind wrappers where navigation.js is already authoritative.
+
+Intentionally NOT changed:
+- Visual CSS cascade. Several stylesheets override earlier selectors, but the current final appearance may rely on load order.
+- Feature modules that wrap home/me/secret. These are structurally messy but changing them immediately before release is higher regression risk unless their final rendered output is fully reproduced.
+- Supabase endpoints/schema/data semantics.
+
+Remaining architectural debt after release:
+- Consolidate shell/home/me/secret wrappers into explicit composition rather than reassignment.
+- Consolidate final CSS rules after computed-style regression snapshots are available.
+- Introduce automated browser tests for route/input/tap flows.

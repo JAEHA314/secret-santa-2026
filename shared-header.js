@@ -13,10 +13,7 @@ async function refreshSharedInboxCount(){const badge=document.querySelector('.sh
 function openSharedInbox(messages){const list=secretInboxHtml(messages);$('#app').innerHTML=shell(`<button id="shared-inbox-back" class="text-back" type="button">← 돌아가기</button>${list}`,false);const main=document.querySelector('#app main');if(main)main.classList.add('secret-inbox-page');bindNav();const back=$('#shared-inbox-back');if(back)back.onclick=()=>render('home')}
 async function showSharedInbox(){let messages=[];try{messages=await loadSecretMessages()}catch(e){console.warn(e)}openSharedInbox(messages)}
 
-// Profile touch/click is handled once, authoritatively, by navigation.js.
-// Do not attach per-render pointer/touch listeners here: they compete with delegated
-// navigation and were the source of intermittent multi-tap behaviour on iOS.
-const sharedHeaderBaseBindNav=bindNav;
-bindNav=function(){sharedHeaderBaseBindNav();document.querySelectorAll('.shared-inbox-link').forEach(button=>{button.onclick=showSharedInbox});refreshSharedInboxCount()};
+// Event binding for shared header controls is owned by navigation.js. Keeping one
+// authoritative binder avoids wrapper chains and duplicate listeners after re-renders.
 const sharedHeaderBaseMe=me;
 me=async function(){await sharedHeaderBaseMe();const main=document.querySelector('main');if(!main)return;main.classList.add('personal-page');if(!main.querySelector('#personal-home-back')){const back=document.createElement('button');back.id='personal-home-back';back.className='text-back personal-home-back';back.type='button';back.textContent='‹ HOME으로';back.onclick=()=>render('home');const header=main.querySelector('.shared-header');if(header)header.insertAdjacentElement('afterend',back);else main.prepend(back)}};
