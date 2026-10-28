@@ -21,21 +21,27 @@ function mailboxSummaryHtml(total){
   return `<section class="card mailbox-summary"><span class="mission-kicker">MOOMOO MAILBOX</span><h2>무무클럽 우체통</h2><div class="mailbox-hero" aria-label="지금까지 모인 편지 ${total}통"><span class="mailbox-hero-icon" aria-hidden="true">📮</span><b class="mailbox-hero-badge">${total}</b></div><div class="mailbox-sealed-copy"><p class="muted">연말 파티 전까지 편지는 봉인되어 있어.</p><p class="muted">마니또 공개 뒤 다같이 열어보자!</p></div></section>`;
 }
 
+function mailboxDrawLockedHtml(){
+  return `<section class="card compose-card mailbox-draw-locked"><span class="mission-kicker">WRITE A LETTER</span><h2>편지 쓰기</h2><p class="muted">마니또를 뽑은 뒤부터 편지를 쓸 수 있어.</p><button class="primary" type="button" data-go="secret">마니또 뽑으러 가기</button></section>`;
+}
+
 async function mailboxPage(){
   $('#app').innerHTML=shell(`<div class="route-placeholder" aria-hidden="true"></div>`);
+  try{await loadGame()}catch(e){console.warn('mailbox game state',e)}
   if(typeof partyContentUnlocked==='function'&&await partyContentUnlocked()){
     try{const rows=await loadAllMailboxLetters();$('#app').innerHTML=shell(partyMailboxHtml(rows));const main=document.querySelector('main');if(main)main.classList.add('mailbox-page','party-mailbox-page');bindNav();if(typeof bindPartyMailboxFilters==='function')bindPartyMailboxFilters();return}catch(e){console.warn('party mailbox',e)}
   }
   let box={total:0,mine:[]};
   try{box=await loadMailboxCounts()}catch(e){console.warn(e)}
   const summary=mailboxSummaryHtml(box.total).replace('</section>',`<p class="muted mailbox-my-count">내가 넣은 편지 <b>${box.mine.length}통</b></p></section>`);
-  $('#app').innerHTML=shell(`${summary}${freeSendHtml()}`);
+  const hasDrawn=Boolean(state.drawnBy&&state.drawnBy[state.user]);
+  $('#app').innerHTML=shell(`${summary}${hasDrawn?freeSendHtml():mailboxDrawLockedHtml()}`);
   const main=document.querySelector('main');
   if(main)main.classList.add('mailbox-page');
   const compose=document.querySelector('#free-send-text')?.closest('.card');
   if(compose)compose.classList.add('compose-card');
   bindNav();
-  bindMailboxCompose(()=>mailboxPage());
+  if(hasDrawn)bindMailboxCompose(()=>mailboxPage());
 }
 
 function bindMailboxCompose(refresh){
