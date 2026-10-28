@@ -9,46 +9,37 @@ function render(page='home'){
   return home();
 }
 
-// iOS/Safari can occasionally delay or lose click after repeated DOM replacement.
-// Normalize a short, stationary touch/pointer gesture into one immediate click for
-// every button-like control. Scrolling/dragging is never converted into a click.
-let fastTapStart=null;
-let fastTapSyntheticTarget=null;
-let fastTapSyntheticAt=0;
-const FAST_TAP_SELECTOR='button,[role="button"],a[href]';
-function fastTapControl(target){
-  const control=target?.closest?.(FAST_TAP_SELECTOR);
+// One authoritative mobile tap path.
+// iOS/Safari may delay or lose a native click when the tapped element is replaced by
+// the page renderer. Convert a short stationary pointer gesture into a click ourselves
+// and prevent the browser from emitting a second delayed click at the same position.
+let tapGesture=null;
+const TAP_SELECTOR='button,[role="button"],a[href]';
+function tappableControl(target){
+  const control=target?.closest?.(TAP_SELECTOR);
   if(!control||control.disabled||control.getAttribute('aria-disabled')==='true')return null;
   return control;
 }
 document.addEventListener('pointerdown',event=>{
-  if(event.pointerType==='mouse')return;
-  const control=fastTapControl(event.target);
+  if(event.pointerType==='mouse'||!event.isPrimary)return;
+  const control=tappableControl(event.target);
   if(!control)return;
-  fastTapStart={control,x:event.clientX,y:event.clientY,id:event.pointerId};
-},{passive:true,capture:true});
-document.addEventListener('pointercancel',()=>{fastTapStart=null},{passive:true,capture:true});
+  tapGesture={control,id:event.pointerId,x:event.clientX,y:event.clientY};
+},{capture:true,passive:true});
+document.addEventListener('pointercancel',()=>{tapGesture=null},{capture:true,passive:true});
 document.addEventListener('pointerup',event=>{
-  if(event.pointerType==='mouse'||!fastTapStart||fastTapStart.id!==event.pointerId)return;
-  const start=fastTapStart;fastTapStart=null;
-  const dx=event.clientX-start.x,dy=event.clientY-start.y;
-  if(Math.hypot(dx,dy)>12||!document.documentElement.contains(start.control))return;
-  const endControl=fastTapControl(event.target);
-  if(endControl!==start.control)return;
-  fastTapSyntheticTarget=start.control;
-  fastTapSyntheticAt=Date.now();
+  if(event.pointerType==='mouse'||!event.isPrimary||!tapGesture||tapGesture.id!==event.pointerId)return;
+  const start=tapGesture;
+  tapGesture=null;
+  const dx=event.clientX-start.x;
+  const dy=event.clientY-start.y;
+  if(Math.hypot(dx,dy)>14||!document.documentElement.contains(start.control))return;
+  if(tappableControl(event.target)!==start.control)return;
+  // Prevent Safari's follow-up native click. The synchronous .click() below is the
+  // single event seen by page handlers, so controls never need a second tap.
+  event.preventDefault();
   start.control.click();
-},{passive:true,capture:true});
-// Suppress only the delayed native click that follows our immediate touch click.
-document.addEventListener('click',event=>{
-  if(event.detail===0)return; // keyboard/programmatic click
-  const control=fastTapControl(event.target);
-  if(control&&control===fastTapSyntheticTarget&&Date.now()-fastTapSyntheticAt<700){
-    event.preventDefault();
-    event.stopImmediatePropagation();
-    fastTapSyntheticTarget=null;
-  }
-},{capture:true});
+},{capture:true,passive:false});
 
 // Use delegated navigation so it survives every #app re-render.
 document.addEventListener('click',event=>{
@@ -60,8 +51,7 @@ document.addEventListener('click',event=>{
   render(page);
 });
 
-// Header avatar navigation is also delegated. One click path only: the global fast-tap
-// layer above handles touch responsiveness, while mouse/keyboard use the native click.
+// Header avatar navigation is delegated and survives every page replacement.
 document.addEventListener('click',event=>{
   const button=event.target.closest('.shared-profile-link');
   if(!button)return;
