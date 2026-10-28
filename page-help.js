@@ -8,6 +8,7 @@ const PAGE_HELP={
 };
 function helpPageKey(){
   const text=($('#app')?.innerText||'');
+  if(document.querySelector('.secret-page'))return 'secret';
   if(text.includes('자유게시판'))return 'board';
   if(text.includes('익명 메시지함'))return 'inbox';
   if(text.includes('나의 미션 기록'))return 'me';
@@ -17,15 +18,15 @@ function helpPageKey(){
   if(document.querySelector('.tree-home,.shared-tree-wrap,.shared-tree-canvas'))return 'home';
   return null;
 }
-function helpHtml(data){return `<div class="page-help-backdrop"><section class="page-help-modal"><button class="page-help-close" type="button" aria-label="닫기">×</button><h2>${data.title}</h2><div class="page-help-items">${data.items.map(([icon,title,body])=>`<div class="page-help-item"><div class="page-help-icon">${icon}</div><div><b>${title}</b><p>${body}</p></div></div>`).join('')}</div><button class="page-help-ok" type="button">확인했어요!</button></section></div>`}
-function openPageHelp(key){const data=PAGE_HELP[key];if(!data)return;document.body.insertAdjacentHTML('beforeend',helpHtml(data));const close=()=>document.querySelector('.page-help-backdrop')?.remove();document.querySelector('.page-help-close').onclick=close;document.querySelector('.page-help-ok').onclick=close;document.querySelector('.page-help-backdrop').onclick=e=>{if(e.target.classList.contains('page-help-backdrop'))close()}}
+function helpHtml(data){return `<div class="page-help-backdrop"><section class="page-help-modal"><h2>${data.title}</h2><div class="page-help-items">${data.items.map(([icon,title,body])=>`<div class="page-help-item"><div class="page-help-icon">${icon}</div><div><b>${title}</b><p>${body}</p></div></div>`).join('')}</div><button class="page-help-ok" type="button">확인했어요!</button></section></div>`}
+function openPageHelp(key){const data=PAGE_HELP[key];if(!data)return;document.body.insertAdjacentHTML('beforeend',helpHtml(data));const close=()=>document.querySelector('.page-help-backdrop')?.remove();document.querySelector('.page-help-ok').onclick=close}
 function installPageHelp(){
   document.querySelectorAll('.page-help-trigger').forEach(x=>x.remove());
   const key=helpPageKey();if(!key)return;
   let target;
   if(key==='home')target=document.querySelector('.shared-tree-canvas')||document.querySelector('.shared-tree-wrap')||document.querySelector('.tree-home');
   else if(key==='board')target=document.querySelector('.chalkboard')||document.querySelector('.chalk-frame')||document.querySelector('.board-scroll-area');
-  else if(key==='secret')target=document.querySelector('.secret-person-card')||document.querySelector('.secret-page .card')||document.querySelector('.shell');
+  else if(key==='secret')target=document.querySelector('.secret-person-card')||document.querySelector('.secret-page')||document.querySelector('.shell');
   else target=document.querySelector('.card')||document.querySelector('.shell');
   if(!target)return;
   const b=document.createElement('button');b.type='button';b.className=`page-help-trigger page-help-${key}`;b.textContent='ⓘ';b.setAttribute('aria-label','이 페이지 설명 보기');b.onclick=e=>{e.stopPropagation();openPageHelp(key)};
