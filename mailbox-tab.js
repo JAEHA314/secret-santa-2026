@@ -41,18 +41,30 @@ async function mailboxPage(){
 function bindMailboxCompose(refresh){
   const messageButton=$('#free-message-send');
   const mailboxButton=$('#free-mailbox-send');
+  const picker=$('#free-mailbox-recipient-picker');
   const text=()=>$('#free-send-text')?$('#free-send-text').value.trim():'';
+  const closePicker=()=>{if(picker)picker.hidden=true};
   if(messageButton)messageButton.onclick=async()=>{
     const value=text();
     if(!value)return alert('보낼 내용을 적어줘.');
     messageButton.disabled=true;
     try{await sendSecretMessage(value,null);alert('마니또에게 익명으로 보냈어!');refresh()}catch(e){messageButton.disabled=false;alert('메시지를 보내지 못했어. 다시 시도해줘.')}
   };
-  if(mailboxButton)mailboxButton.onclick=async()=>{
-    const value=text();
-    if(!value)return alert('편지 내용을 적어줘.');
-    if(!confirm('✉️ 우체통에 넣으면 연말 파티 전까지 본인도 다시 열어보거나 수정할 수 없어요.\n\n정말 우체통에 넣을까요?'))return;
-    mailboxButton.disabled=true;
-    try{await sendFreeMailboxLetter(value);alert('편지를 우체통에 넣었어! 연말 파티 날 다시 만나자.');refresh()}catch(e){mailboxButton.disabled=false;alert('편지를 넣지 못했어. 다시 시도해줘.')}
+  if(mailboxButton)mailboxButton.onclick=()=>{
+    if(!text())return alert('편지 내용을 적어줘.');
+    if(picker)picker.hidden=false;
   };
+  document.querySelectorAll('[data-mailbox-recipient-close]').forEach(button=>button.onclick=closePicker);
+  document.querySelectorAll('[data-mailbox-recipient]').forEach(button=>button.onclick=async()=>{
+    const value=text();
+    if(!value){closePicker();return alert('편지 내용을 적어줘.')}
+    const receiverId=button.dataset.mailboxRecipient;
+    const receiver=receiverId==='all'?null:person(receiverId);
+    const recipientLabel=receiverId==='all'?'모두':receiver?.name;
+    if(!recipientLabel)return alert('수신자를 찾지 못했어.');
+    if(!confirm(`✉️ ${recipientLabel}${receiverId==='all'?'에게':'에게'} 보내는 편지를 우체통에 넣을까?\n\n연말 파티 전까지 다시 열거나 수정할 수 없어.`))return;
+    document.querySelectorAll('[data-mailbox-recipient]').forEach(x=>x.disabled=true);
+    if(mailboxButton)mailboxButton.disabled=true;
+    try{await sendFreeMailboxLetter(value,receiverId);closePicker();alert(`${recipientLabel}에게 보낼 편지를 우체통에 넣었어!`);refresh()}catch(e){console.error(e);document.querySelectorAll('[data-mailbox-recipient]').forEach(x=>x.disabled=false);if(mailboxButton)mailboxButton.disabled=false;alert('편지를 넣지 못했어. 다시 시도해줘.')}
+  });
 }
