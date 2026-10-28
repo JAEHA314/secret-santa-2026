@@ -18,7 +18,7 @@ render=function(page='home'){
 };
 
 function mailboxSummaryHtml(total){
-  return `<section class="card mailbox-summary"><span class="mission-kicker">MOOMOO MAILBOX</span><h2>무무클럽 우체통</h2><div class="mailbox-hero" aria-label="지금까지 모인 편지 ${total}통"><span class="mailbox-hero-icon" aria-hidden="true">📮</span><b class="mailbox-hero-badge">${total}</b></div><p class="mailbox-summary-label">지금까지 모인 편지</p><p class="muted">연말 파티 전까지 편지는 봉인되어 있어.</p></section>`;
+  return `<section class="card mailbox-summary"><span class="mission-kicker">MOOMOO MAILBOX</span><h2>무무클럽 우체통</h2><div class="mailbox-hero" aria-label="지금까지 모인 편지 ${total}통"><span class="mailbox-hero-icon" aria-hidden="true">📮</span><b class="mailbox-hero-badge">${total}</b></div><p class="muted mailbox-sealed-copy">연말 파티 전까지 편지는 봉인되어 있어.</p></section>`;
 }
 
 async function mailboxPage(){
