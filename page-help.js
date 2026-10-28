@@ -1,18 +1,17 @@
 const PAGE_HELP={
-  home:{kicker:'HOW TO',title:'홈 화면 안내',items:[['🎄','트리 꾸미기','미션을 완료할 때마다 트리에 장식이 하나씩 추가돼. 모두 함께 트리를 완성해봐!'],['TREE Lv.','트리 레벨','현재까지 모은 장식 개수와 트리의 완성도를 확인할 수 있어.'],['D-day','파티까지 남은 날짜','마니또가 공개되는 연말 파티까지 남은 날짜야.'],['👥','친구들의 진행도','트리 아래에서 친구들이 완료한 미션 개수를 확인할 수 있어.']]},
-  mail:{kicker:'HOW TO',title:'우체통 안내',items:[['📮','무무클럽 우체통','파티 전까지 편지를 모아두는 곳이야. 공개 뒤 다 같이 열어볼 수 있어.'],['✉️','편지 쓰기','마니또에게 익명 메시지를 보내거나, 우체통에 넣을 편지를 쓸 수 있어.'],['TO.','수신자 선택','우체통 편지는 모두에게 보내거나 원하는 친구 한 명을 골라 보낼 수 있어.']]},
-  secret:{kicker:'HOW TO',title:'시크릿 미션 안내',items:[['🎅','나의 마니또','내가 몰래 챙길 사람과 오늘 수행할 미션을 확인하는 곳이야.'],['✓','미션 수행','미션의 안내에 따라 메시지·편지·게시글 등을 남기면 완료할 수 있어.'],['25','진행도','완료한 미션 수를 확인하고 차근차근 25개를 채워봐.']]},
-  wish:{kicker:'HOW TO',title:'위시리스트 안내',items:[['♡','친구들의 위시리스트','각 캐릭터를 눌러 좋아하는 것과 싫어하는 것을 확인할 수 있어.'],['🎁','선물 힌트','마니또 선물을 고를 때 참고할 수 있는 힌트야.'],['나','내 위시리스트','내 캐릭터에서는 내 취향을 직접 작성하고 수정할 수 있어.']]},
-  me:{kicker:'HOW TO',title:'내 기록 안내',items:[['☺','프로필','내 캐릭터와 지금 설정한 상태 메시지를 확인할 수 있어.'],['📅','나의 미션 기록','달력에서 내가 미션을 완료한 날짜와 기록을 확인할 수 있어.']]},
-  inbox:{kicker:'HOW TO',title:'익명 메시지함 안내',items:[['💌','익명 메시지','내 마니또가 미션으로 보낸 익명 메시지가 이곳에 모여.'],['🔒','정체는 비밀','파티에서 마니또가 공개되기 전까지 보낸 사람의 정체는 비밀이야.']]},
-  board:{kicker:'HOW TO',title:'자유게시판 안내',items:[['📌','자유게시판','무무클럽 친구들이 함께 글을 남기고 보는 공간이야.'],['⌄','필터','작성자와 글 종류를 골라 원하는 게시글만 모아볼 수 있어.']]}
+  home:{kicker:'HOW TO',title:'TRIM THE TREE',items:[['🎄','미션으로 트리 꾸미기','미션을 완료할수록 트리에 장식이 하나씩 늘어나.<br>모두 함께 트리를 완성해보자!'],['👑','미션 진행도 확인하기','친구들이 지금까지 완료한 미션 수를 확인할 수 있어.<br>가장 많은 미션을 수행한 친구에게는 왕관이 씌워져.'],['☺️','이거 내 이모지야','각 캐릭터의 얼굴을 눌러봐!<br>친구들이 설정한 상태 이모지를 확인할 수 있어.']]},
+  mail:{kicker:'HOW TO',title:'WRITE A LETTER',items:[['📮','무무클럽 우체통','파티 전까지 편지를 모아두는 곳이야.<br>마니또가 모두 공개될 때까지 우체통은 열어볼 수 없어!'],['💚','마니또에게 익명으로 보내기','내 마니또에게 익명 메시지를 보낼 수 있어.<br>편지를 받은 사람은 익명 메시지함에서 확인할 수 있어.'],['❤️','수신자를 선택하고 우체통에 넣기','수신자를 선택해서 편지를 보낼 수 있어!<br>우체통이 열리면 다같이 확인할 수 있어.']]},
+  secret:{kicker:'HOW TO',title:'SECRET SANTA',items:[['🎅','나의 마니또','마니또를 뽑으면, 내가 몰래 챙겨야 할 친구가 정해져.<br>파티 날까지 정체는 비밀!'],['🎯','오늘의 미션','파티 전까지 수행해야 할 미션이 하나씩 주어져.<br>미션을 수행해서 트리를 꾸며보자!'],['↻','미션 패스','지금 하기 어려운 미션은 패스하고 다음에 다시 도전할 수 있어.<br>하지만 트리를 완성하기 위해서는 패스한 미션도 언젠가 해야 해!']]},
+  me:{kicker:'HOW TO',title:'프로필',items:[['☺️','이거 내 이모지야','내 캐릭터의 상태 이모지를 자유롭게 설정하고 바꿀 수 있어.<br>홈 화면의 트리 아래 캐릭터 얼굴을 누르면 다른 친구의 이모지를 확인할 수 있어.'],['📅','나의 미션 기록','달력에서 미션을 완료한 날을 확인할 수 있어.<br>날짜를 눌러 그날 어떤 미션을 했는지도 다시 볼 수 있어.']]},
+  inbox:{kicker:'HOW TO',title:'익명 메시지함',items:[['💌','마니또의 메시지','내 마니또가 보낸 익명 메시지가 이곳에 차곡차곡 모여.'],['🔒','파티 전까지 비밀','누가 내 마니또인지는 파티 날까지 비밀이야.<br>메시지를 보면서 누군지 추측해봐!']]},
+  board:{kicker:'HOW TO',title:'자유게시판',items:[['📌','자유게시판','무무클럽 친구들이 자유롭게 이야기를 남기는 공간이야.<br>미션이 아니어도 언제든 하고 싶은 이야기를 자유롭게 남길 수 있어.'],['✅','골라보기','작성자와 글 종류를 선택해서 보고 싶은 게시물만 모아볼 수 있어.']]}
 };
 function helpPageKey(){
   const text=($('#app')?.innerText||'');
   if(text.includes('자유게시판'))return 'board';
   if(text.includes('익명 메시지함'))return 'inbox';
   if(text.includes('나의 미션 기록'))return 'me';
-  if(text.includes('우리의 위시리스트')||text.includes('위시리스트'))return 'wish';
+  if(text.includes('우리의 위시리스트')||text.includes('위시리스트'))return null;
   if(text.includes('무무클럽 우체통')||text.includes('편지 쓰기'))return 'mail';
   if(text.includes('내가 챙길 사람은')||text.includes("TODAY'S MISSION")||text.includes('FIRST MISSION'))return 'secret';
   if(document.querySelector('.tree-scene,.tree-wrap,.tree-card'))return 'home';
@@ -23,7 +22,10 @@ function openPageHelp(key){const data=PAGE_HELP[key];if(!data)return;document.bo
 function installPageHelp(){
   document.querySelectorAll('.page-help-trigger').forEach(x=>x.remove());
   const key=helpPageKey();if(!key)return;
-  const target=key==='home'?(document.querySelector('.tree-scene,.tree-wrap,.tree-card')||document.querySelector('.shell')):(document.querySelector('.card')||document.querySelector('.shell'));
+  let target;
+  if(key==='home')target=document.querySelector('.tree-scene,.tree-wrap,.tree-card')||document.querySelector('.shell');
+  else if(key==='board')target=document.querySelector('.board-shell,.board-frame,.board-panel,.board')||document.querySelector('.card')||document.querySelector('.shell');
+  else target=document.querySelector('.card')||document.querySelector('.shell');
   if(!target)return;
   const b=document.createElement('button');b.type='button';b.className='page-help-trigger';b.textContent='ⓘ';b.setAttribute('aria-label','이 페이지 설명 보기');b.onclick=e=>{e.stopPropagation();openPageHelp(key)};
   target.appendChild(b);
