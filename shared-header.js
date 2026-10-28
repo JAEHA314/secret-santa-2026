@@ -12,7 +12,20 @@ secretInboxHtml=function(messages){return `<section class="card secret-inbox-car
 async function refreshSharedInboxCount(){const badge=document.querySelector('.shared-inbox-count');if(!badge||typeof loadSecretMessages!=='function')return;try{const messages=await loadSecretMessages();if(document.body.contains(badge))badge.textContent=messages.length}catch(e){console.warn('shared inbox count',e)}}
 function openSharedInbox(messages){const list=secretInboxHtml(messages);$('#app').innerHTML=shell(`<button id="shared-inbox-back" class="text-back" type="button">← 돌아가기</button>${list}`,false);const main=document.querySelector('#app main');if(main)main.classList.add('secret-inbox-page');bindNav();const back=$('#shared-inbox-back');if(back)back.onclick=()=>render('home')}
 async function showSharedInbox(){let messages=[];try{messages=await loadSecretMessages()}catch(e){console.warn(e)}openSharedInbox(messages)}
+function bindSharedProfileTap(button){
+  let opened=false;
+  const openProfile=event=>{
+    if(opened)return;
+    opened=true;
+    if(event){event.preventDefault();event.stopPropagation()}
+    render('me');
+  };
+  button.style.touchAction='manipulation';
+  if(window.PointerEvent)button.addEventListener('pointerdown',openProfile,{once:true});
+  else button.addEventListener('touchend',openProfile,{once:true,passive:false});
+  button.addEventListener('click',openProfile,{once:true});
+}
 const sharedHeaderBaseBindNav=bindNav;
-bindNav=function(){sharedHeaderBaseBindNav();document.querySelectorAll('.shared-profile-link').forEach(button=>{button.onclick=()=>render('me')});document.querySelectorAll('.shared-inbox-link').forEach(button=>{button.onclick=showSharedInbox});refreshSharedInboxCount()};
+bindNav=function(){sharedHeaderBaseBindNav();document.querySelectorAll('.shared-profile-link').forEach(bindSharedProfileTap);document.querySelectorAll('.shared-inbox-link').forEach(button=>{button.onclick=showSharedInbox});refreshSharedInboxCount()};
 const sharedHeaderBaseMe=me;
 me=async function(){await sharedHeaderBaseMe();const main=document.querySelector('main');if(!main)return;main.classList.add('personal-page');if(!main.querySelector('#personal-home-back')){const back=document.createElement('button');back.id='personal-home-back';back.className='text-back personal-home-back';back.type='button';back.textContent='‹ HOME으로';back.onclick=()=>render('home');const header=main.querySelector('.shared-header');if(header)header.insertAdjacentElement('afterend',back);else main.prepend(back)}};
