@@ -78,9 +78,9 @@ function bindMailboxCompose(refresh){
     if(mailboxButton)mailboxButton.disabled=true;
     try{await sendFreeMailboxLetter(value,receiverId,anonymous);closePicker();alert(`${recipientLabel}에게 보낼 ${anonymous?'익명 ':''}편지를 우체통에 넣었어!`);refresh()}catch(e){console.error(e);sending=false;document.querySelectorAll('[data-mailbox-recipient]').forEach(x=>x.disabled=false);if(mailboxButton)mailboxButton.disabled=false;alert('편지를 넣지 못했어. 다시 시도해줘.')}
   };
+  // Native click is the single authoritative activation path. A separate pointerup
+  // handler used to compete with global touch handling and could fire twice.
   document.querySelectorAll('[data-mailbox-recipient]').forEach(button=>{
-    button.style.touchAction='manipulation';
-    button.addEventListener('pointerup',event=>{event.preventDefault();chooseRecipient(button)},{passive:false});
-    button.addEventListener('click',event=>event.preventDefault());
+    button.onclick=()=>chooseRecipient(button);
   });
 }
