@@ -55,7 +55,9 @@ function bindMailboxCompose(refresh){
     if(picker)picker.hidden=false;
   };
   document.querySelectorAll('[data-mailbox-recipient-close]').forEach(button=>button.onclick=closePicker);
-  document.querySelectorAll('[data-mailbox-recipient]').forEach(button=>button.onclick=async()=>{
+  let sending=false;
+  const chooseRecipient=async button=>{
+    if(sending)return;
     const value=text();
     if(!value){closePicker();return alert('편지 내용을 적어줘.')}
     const receiverId=button.dataset.mailboxRecipient;
@@ -64,9 +66,15 @@ function bindMailboxCompose(refresh){
     const anonymous=Boolean(document.querySelector('#free-mailbox-anonymous')?.checked);
     if(!recipientLabel)return alert('수신자를 찾지 못했어.');
     const anonymousLine=anonymous?'\n\n익명 편지라서 우체통이 열린 뒤에도 보낸 사람 이름은 공개되지 않아.':'';
-    if(!confirm(`✉️ ${recipientLabel}${receiverId==='all'?'에게':'에게'} 보내는 편지를 우체통에 넣을까?\n\n연말 파티 전까지 다시 열거나 수정할 수 없어.${anonymousLine}`))return;
+    if(!confirm(`✉️ ${recipientLabel}에게 보내는 편지를 우체통에 넣을까?\n\n연말 파티 전까지 다시 열거나 수정할 수 없어.${anonymousLine}`))return;
+    sending=true;
     document.querySelectorAll('[data-mailbox-recipient]').forEach(x=>x.disabled=true);
     if(mailboxButton)mailboxButton.disabled=true;
-    try{await sendFreeMailboxLetter(value,receiverId,anonymous);closePicker();alert(`${recipientLabel}에게 보낼 ${anonymous?'익명 ':''}편지를 우체통에 넣었어!`);refresh()}catch(e){console.error(e);document.querySelectorAll('[data-mailbox-recipient]').forEach(x=>x.disabled=false);if(mailboxButton)mailboxButton.disabled=false;alert('편지를 넣지 못했어. 다시 시도해줘.')}
+    try{await sendFreeMailboxLetter(value,receiverId,anonymous);closePicker();alert(`${recipientLabel}에게 보낼 ${anonymous?'익명 ':''}편지를 우체통에 넣었어!`);refresh()}catch(e){console.error(e);sending=false;document.querySelectorAll('[data-mailbox-recipient]').forEach(x=>x.disabled=false);if(mailboxButton)mailboxButton.disabled=false;alert('편지를 넣지 못했어. 다시 시도해줘.')}
+  };
+  document.querySelectorAll('[data-mailbox-recipient]').forEach(button=>{
+    button.style.touchAction='manipulation';
+    button.addEventListener('pointerup',event=>{event.preventDefault();chooseRecipient(button)},{passive:false});
+    button.addEventListener('click',event=>event.preventDefault());
   });
 }
