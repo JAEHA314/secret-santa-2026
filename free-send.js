@@ -4,18 +4,18 @@ function encodeFreeMailboxMessage(message,receiverId){
   return `${FREE_MAILBOX_MARKER}${audience}]]${message}`;
 }
 
-async function sendFreeMailboxLetter(message,receiverId='all'){
+async function sendFreeMailboxLetter(message,receiverId='all',isAnonymous=false){
   const toEveryone=receiverId==='all';
   const receiver=toEveryone?state.user:receiverId;
   if(!receiver||(!toEveryone&&!PEOPLE.some(p=>p.id===receiver)))throw new Error('invalid receiver');
   const storedMessage=encodeFreeMailboxMessage(message,receiverId);
-  const r=await fetch(`${SUPABASE_URL}/rest/v1/mailbox_letters`,{method:'POST',headers:apiHeaders,body:JSON.stringify({sender_id:state.user,receiver_id:receiver,mission_id:15,message:storedMessage})});
+  const r=await fetch(`${SUPABASE_URL}/rest/v1/mailbox_letters`,{method:'POST',headers:apiHeaders,body:JSON.stringify({sender_id:state.user,receiver_id:receiver,mission_id:15,message:storedMessage,is_anonymous:Boolean(isAnonymous)})});
   if(!r.ok){let detail='';try{detail=await r.text()}catch(e){}throw new Error(`mailbox send ${r.status} ${detail}`)}
 }
 
 function freeMailboxRecipientPickerHtml(){
   const choices=PEOPLE.filter(p=>p.id!==state.user).map(p=>`<button class="free-mailbox-recipient" type="button" data-mailbox-recipient="${p.id}">${visual(p,'free-mailbox-recipient-img')}<b>${esc(p.name)}</b></button>`).join('');
-  return `<div id="free-mailbox-recipient-picker" class="free-mailbox-recipient-picker" hidden><button class="free-mailbox-recipient-backdrop" type="button" data-mailbox-recipient-close aria-label="수신자 선택 닫기"></button><section class="free-mailbox-recipient-sheet" role="dialog" aria-modal="true" aria-labelledby="free-mailbox-recipient-title"><button class="free-mailbox-recipient-close" type="button" data-mailbox-recipient-close aria-label="닫기">×</button><span class="mission-kicker">TO.</span><h3 id="free-mailbox-recipient-title">누구에게 보낼까?</h3><p class="muted">모두에게 보내거나 한 명을 골라줘.</p><div class="free-mailbox-recipient-grid"><button class="free-mailbox-recipient free-mailbox-recipient-all" type="button" data-mailbox-recipient="all"><span aria-hidden="true">💌</span><b>모두</b></button>${choices}</div></section></div>`;
+  return `<div id="free-mailbox-recipient-picker" class="free-mailbox-recipient-picker" hidden><button class="free-mailbox-recipient-backdrop" type="button" data-mailbox-recipient-close aria-label="수신자 선택 닫기"></button><section class="free-mailbox-recipient-sheet" role="dialog" aria-modal="true" aria-labelledby="free-mailbox-recipient-title"><button class="free-mailbox-recipient-close" type="button" data-mailbox-recipient-close aria-label="닫기">×</button><span class="mission-kicker">TO.</span><h3 id="free-mailbox-recipient-title">누구에게 보낼까?</h3><p class="muted">모두에게 보내거나 한 명을 골라줘.</p><label class="free-mailbox-anonymous-option"><input id="free-mailbox-anonymous" type="checkbox"><span><b>익명으로 보내기</b><small>우체통이 열린 뒤에도 보낸 사람은 익명으로 표시돼.</small></span></label><div class="free-mailbox-recipient-grid"><button class="free-mailbox-recipient free-mailbox-recipient-all" type="button" data-mailbox-recipient="all"><span aria-hidden="true">💌</span><b>모두</b></button>${choices}</div></section></div>`;
 }
 
 function freeSendHtml(){
