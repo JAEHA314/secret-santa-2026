@@ -61,10 +61,12 @@ function bindMailboxCompose(refresh){
     const receiverId=button.dataset.mailboxRecipient;
     const receiver=receiverId==='all'?null:person(receiverId);
     const recipientLabel=receiverId==='all'?'모두':receiver?.name;
+    const anonymous=Boolean(document.querySelector('#free-mailbox-anonymous')?.checked);
     if(!recipientLabel)return alert('수신자를 찾지 못했어.');
-    if(!confirm(`✉️ ${recipientLabel}${receiverId==='all'?'에게':'에게'} 보내는 편지를 우체통에 넣을까?\n\n연말 파티 전까지 다시 열거나 수정할 수 없어.`))return;
+    const anonymousLine=anonymous?'\n\n익명 편지라서 우체통이 열린 뒤에도 보낸 사람 이름은 공개되지 않아.':'';
+    if(!confirm(`✉️ ${recipientLabel}${receiverId==='all'?'에게':'에게'} 보내는 편지를 우체통에 넣을까?\n\n연말 파티 전까지 다시 열거나 수정할 수 없어.${anonymousLine}`))return;
     document.querySelectorAll('[data-mailbox-recipient]').forEach(x=>x.disabled=true);
     if(mailboxButton)mailboxButton.disabled=true;
-    try{await sendFreeMailboxLetter(value,receiverId);closePicker();alert(`${recipientLabel}에게 보낼 편지를 우체통에 넣었어!`);refresh()}catch(e){console.error(e);document.querySelectorAll('[data-mailbox-recipient]').forEach(x=>x.disabled=false);if(mailboxButton)mailboxButton.disabled=false;alert('편지를 넣지 못했어. 다시 시도해줘.')}
+    try{await sendFreeMailboxLetter(value,receiverId,anonymous);closePicker();alert(`${recipientLabel}에게 보낼 ${anonymous?'익명 ':''}편지를 우체통에 넣었어!`);refresh()}catch(e){console.error(e);document.querySelectorAll('[data-mailbox-recipient]').forEach(x=>x.disabled=false);if(mailboxButton)mailboxButton.disabled=false;alert('편지를 넣지 못했어. 다시 시도해줘.')}
   });
 }
