@@ -9,42 +9,14 @@ function render(page='home'){
   return home();
 }
 
-// One authoritative mobile tap path.
-// iOS/Safari may delay or lose a native click when the tapped element is replaced by
-// the page renderer. Convert a short stationary pointer gesture into a click ourselves
-// and prevent the browser from emitting a second delayed click at the same position.
-let tapGesture=null;
-const TAP_SELECTOR='button,[role="button"],a[href]';
-function tappableControl(target){
-  const control=target?.closest?.(TAP_SELECTOR);
-  if(!control||control.disabled||control.getAttribute('aria-disabled')==='true')return null;
-  return control;
-}
-document.addEventListener('pointerdown',event=>{
-  if(event.pointerType==='mouse'||!event.isPrimary)return;
-  const control=tappableControl(event.target);
-  if(!control)return;
-  tapGesture={control,id:event.pointerId,x:event.clientX,y:event.clientY};
-},{capture:true,passive:true});
-document.addEventListener('pointercancel',()=>{tapGesture=null},{capture:true,passive:true});
-document.addEventListener('pointerup',event=>{
-  if(event.pointerType==='mouse'||!event.isPrimary||!tapGesture||tapGesture.id!==event.pointerId)return;
-  const start=tapGesture;
-  tapGesture=null;
-  const dx=event.clientX-start.x;
-  const dy=event.clientY-start.y;
-  if(Math.hypot(dx,dy)>14||!document.documentElement.contains(start.control))return;
-  if(tappableControl(event.target)!==start.control)return;
-  // Prevent Safari's follow-up native click. The synchronous .click() below is the
-  // single event seen by page handlers, so controls never need a second tap.
-  event.preventDefault();
-  start.control.click();
-},{capture:true,passive:false});
+// Keep browser-native click/focus behaviour. In particular, do not synthesize clicks
+// from pointerup: on iOS that can steal focus from inputs/textareas and can double-fire
+// controls that have their own pointer handlers.
 
-// Use delegated navigation so it survives every #app re-render.
+// Delegated navigation survives every #app re-render.
 document.addEventListener('click',event=>{
-  const button=event.target.closest('[data-go]');
-  if(!button)return;
+  const button=event.target.closest?.('[data-go]');
+  if(!button||button.disabled)return;
   const page=button.dataset.go;
   if(!page)return;
   event.preventDefault();
@@ -53,8 +25,8 @@ document.addEventListener('click',event=>{
 
 // Header avatar navigation is delegated and survives every page replacement.
 document.addEventListener('click',event=>{
-  const button=event.target.closest('.shared-profile-link');
-  if(!button)return;
+  const button=event.target.closest?.('.shared-profile-link');
+  if(!button||button.disabled)return;
   event.preventDefault();
   event.stopPropagation();
   render('me');
