@@ -1,6 +1,7 @@
 // Admin mission filters and sealed-mailbox inspection.
 let adminMissionTargetFilter='all';
 let adminMissionTypeFilter='all';
+let adminMailboxAnonFilter='all';
 
 const adminBaseGamePanel=adminGamePanel;
 adminGamePanel=function(){
@@ -18,16 +19,22 @@ bindAdminGame=function(){
     button.disabled=true;
     try{
       const rows=await loadAllMailboxLetters();
-      list.innerHTML=rows.length?rows.slice().reverse().map(x=>{
-        const free=typeof freeMailboxMeta==='function'?freeMailboxMeta(x):null;
-        const sender=person(x.sender_id);
-        const audience=typeof partyMailboxAudience==='function'?partyMailboxAudience(x):(x.receiver_id||'');
-        const receiver=audience==='everyone'?null:person(audience);
-        const to=audience==='everyone'?'모두':(receiver?.name||'알 수 없음');
-        const body=free?free.message:(x.message||'');
-        const anon=x.is_anonymous?'<span class="admin-anon-badge">사용자 화면 익명</span>':'';
-        return `<article class="admin-mailbox-letter"><div class="admin-mailbox-meta"><b>FROM. ${sender?esc(sender.name):'알 수 없음'}</b><span>TO. ${esc(to)}</span>${anon}</div><p>${esc(body).replace(/\n/g,'<br>')}</p><small>${formatMessageDate(x.created_at)}</small></article>`;
-      }).join(''):'<p class="small muted">아직 우체통에 들어온 편지가 없어.</p>';
+      const renderLetters=()=>{
+        const filtered=rows.filter(x=>adminMailboxAnonFilter==='all'||(adminMailboxAnonFilter==='anonymous'?x.is_anonymous:!x.is_anonymous));
+        list.innerHTML=`<div class="admin-mailbox-filter"><label class="small">편지 필터<select id="admin-mailbox-anon-filter"><option value="all" ${adminMailboxAnonFilter==='all'?'selected':''}>전체 편지</option><option value="anonymous" ${adminMailboxAnonFilter==='anonymous'?'selected':''}>익명 체크만</option><option value="named" ${adminMailboxAnonFilter==='named'?'selected':''}>익명 아닌 편지만</option></select></label><span class="small muted">${filtered.length}통</span></div>`+(filtered.length?filtered.slice().reverse().map(x=>{
+          const free=typeof freeMailboxMeta==='function'?freeMailboxMeta(x):null;
+          const sender=person(x.sender_id);
+          const audience=typeof partyMailboxAudience==='function'?partyMailboxAudience(x):(x.receiver_id||'');
+          const receiver=audience==='everyone'?null:person(audience);
+          const to=audience==='everyone'?'모두':(receiver?.name||'알 수 없음');
+          const body=free?free.message:(x.message||'');
+          const anon=x.is_anonymous?'<span class="admin-anon-badge">사용자 화면 익명</span>':'';
+          return `<article class="admin-mailbox-letter"><div class="admin-mailbox-meta"><b>FROM. ${sender?esc(sender.name):'알 수 없음'}</b><span>TO. ${esc(to)}</span>${anon}</div><p>${esc(body).replace(/\n/g,'<br>')}</p><small>${formatMessageDate(x.created_at)}</small></article>`;
+        }).join(''):'<p class="small muted">조건에 맞는 편지가 없어.</p>');
+        const filter=list.querySelector('#admin-mailbox-anon-filter');
+        if(filter)filter.onchange=()=>{adminMailboxAnonFilter=filter.value;renderLetters()};
+      };
+      renderLetters();
       list.classList.remove('hidden');
       button.textContent='우체통 편지 닫기';
     }catch(e){console.error(e);alert('우체통 편지를 불러오지 못했어.')}
