@@ -1,4 +1,4 @@
-// Party-day SECRET extension: after every reveal, keep only the two Secret Santa identity cards.
+// Party-day SECRET extension: preserve character colors and, after every reveal, keep only the two Secret Santa identity cards.
 const partySecretBase=secret;
 secret=async function(){
   let party=null;
@@ -7,8 +7,15 @@ secret=async function(){
   if(allRevealed)$('#app').style.visibility='hidden';
   try{
     await partySecretBase();
+    try{await loadGame()}catch(e){console.warn('secret assignment color',e)}
+    const receiverId=state.assignments&&state.assignments[state.user];
+    const receiver=receiverId&&person(receiverId);
+    if(receiver){
+      document.querySelectorAll('.secret-page h2,.secret-page b,.secret-page strong').forEach(el=>{
+        if(el.textContent.trim()===receiver.name){el.classList.add(`character-${receiver.id}`);el.style.webkitTextFillColor='currentColor'}
+      });
+    }
     if(!allRevealed)return;
-    await loadGame();
     const giverId=partyActualGiver(state.user);
     const giver=giverId&&person(giverId);
     if(!giver)return;
