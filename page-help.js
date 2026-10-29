@@ -3,15 +3,16 @@ const PAGE_HELP={
   mail:{title:'WRITE A LETTER',items:[['📮','무무클럽 우체통','파티 전까지 편지를 모아두는 곳이야.<br>마니또가 모두 공개될 때까지 우체통은 열어볼 수 없어!'],['💚','마니또에게 익명으로 보내기','내 마니또에게 익명 메시지를 보낼 수 있어.<br>받은 편지는 익명 메시지함에서 확인할 수 있어.'],['❤️','수신자를 선택하고 우체통에 넣기','수신자를 선택해서 편지를 보낼 수 있어!<br>우체통이 열리면 다 같이 확인할 수 있어.']]},
   secret:{title:'SECRET SANTA',items:[['🎅','나의 마니또','마니또를 뽑으면, 내가 몰래 챙겨야 할 친구가 정해져.<br>파티 날까지 정체는 비밀!'],['🎯','오늘의 미션','파티 전까지 수행해야 할 미션이 하나씩 주어져.<br>미션을 수행해서 트리를 꾸며보자!'],['↻','미션 패스','지금 하기 어려운 미션은 패스하고 다음에 다시 도전할 수 있어. 하지만 트리를 완성하려면 패스한 미션도 언젠가 해야 해!']]},
   me:{title:'나의 프로필',items:[['☺️','이거 내 이모지야','내 캐릭터의 상태 이모지를 설정할 수 있어.<br>트리 아래 캐릭터를 누르면 다른 친구의 이모지도 확인할 수 있어.'],['📅','나의 미션 기록','달력에서 미션을 완료한 날을 확인할 수 있어.<br>날짜를 누르면 그날의 세부 내용을 확인할 수 있어.']]},
-  inbox:{title:'익명 메시지함',items:[['💌','마니또의 메시지','내 마니또가 보낸 익명 메시지가 이곳에 차곡차곡 모여.'],['🔒','파티 전까지 비밀','누가 내 마니또인지는 파티 날까지 비밀이야.<br>메시지를 보면서 누군지 추측해봐!']]},
+  inbox:{title:'메시지함',items:[['💌','마니또의 메시지','내 마니또가 보낸 메시지가 이곳에 차곡차곡 모여.'],['🔒','파티 전까지 비밀','파티 전에는 보낸 사람의 이름이 가려져 있어.<br>메시지를 보면서 누군지 추측해봐!'],['🎉','파티 날 공개','마니또가 공개된 뒤에는 각 메시지를 누가 보냈는지도 함께 확인할 수 있어.']]},
   board:{title:'자유게시판',items:[['📌','자유게시판','미션이 아니어도 언제든 자유롭게 이야기를 남길 수 있는 공간이야.'],['✏️','새 포스트잇 붙이기','칠판 위 연필 버튼을 누르면 새로운 포스트잇을 붙일 수 있어.'],['✅','골라보기','작성자와 글 종류를 선택해서 보고 싶은 게시물만 모아볼 수 있어.']]}
 };
 function helpPageKey(){
   const text=($('#app')?.innerText||'');
   if(document.querySelector('.party-mailbox-open'))return null;
+  if(document.querySelector('.secret-inbox-card'))return 'inbox';
   if(document.querySelector('.secret-page'))return 'secret';
   if(text.includes('자유게시판'))return 'board';
-  if(text.includes('익명 메시지함'))return 'inbox';
+  if(text.includes('익명 메시지함')||text.includes('메시지함'))return 'inbox';
   if(text.includes('나의 미션 기록'))return 'me';
   if(text.includes('우리의 위시리스트')||text.includes('위시리스트'))return null;
   if(text.includes('무무클럽 우체통')||text.includes('편지 쓰기'))return 'mail';
