@@ -8,6 +8,7 @@ const PAGE_HELP={
 };
 function helpPageKey(){
   const text=($('#app')?.innerText||'');
+  if(document.querySelector('.party-mailbox-open'))return null;
   if(document.querySelector('.secret-page'))return 'secret';
   if(text.includes('자유게시판'))return 'board';
   if(text.includes('익명 메시지함'))return 'inbox';
