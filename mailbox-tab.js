@@ -23,7 +23,15 @@ async function mailboxPage(){
   $('#app').innerHTML=shell(`<div class="route-placeholder" aria-hidden="true"></div>`);
   try{await loadGame()}catch(e){console.warn('mailbox game state',e)}
   if(typeof partyContentUnlocked==='function'&&await partyContentUnlocked()){
-    try{const rows=await loadAllMailboxLetters();$('#app').innerHTML=shell(partyMailboxHtml(rows));const main=document.querySelector('main');if(main)main.classList.add('mailbox-page','party-mailbox-page');bindNav();if(typeof bindPartyMailboxFilters==='function')bindPartyMailboxFilters();return}catch(e){console.warn('party mailbox',e)}
+    try{
+      // The party mailbox must resolve mission labels from the shared Supabase definitions,
+      // not from the bundled defaults. This keeps admin-edited mission text in sync.
+      if(typeof loadMissionDefinitions==='function')await loadMissionDefinitions();
+      const rows=await loadAllMailboxLetters();
+      $('#app').innerHTML=shell(partyMailboxHtml(rows));
+      const main=document.querySelector('main');if(main)main.classList.add('mailbox-page','party-mailbox-page');
+      bindNav();if(typeof bindPartyMailboxFilters==='function')bindPartyMailboxFilters();return
+    }catch(e){console.warn('party mailbox',e)}
   }
   let box={total:0,mine:[]};
   try{box=await loadMailboxCounts()}catch(e){console.warn(e)}
