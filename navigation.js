@@ -36,12 +36,10 @@ document.addEventListener('click',event=>{
   render('me');
 });
 
-// Legacy page renderers still call bindNav(). Navigation itself is delegated above;
-// keep only controls that need refresh work here. Avoid repeating the same inbox
-// request when a page performs an immediate placeholder -> final render.
-let sharedInboxCountRefreshAt=0;
+// Legacy page renderers still call bindNav(). Navigation itself is delegated above.
+// refreshSharedInboxCount deduplicates its own in-flight request and immediately paints
+// the cached count into newly rendered headers, so placeholder/final rerenders stay correct.
 function bindNav(){
   document.querySelectorAll('.shared-inbox-link').forEach(button=>{button.onclick=()=>showSharedInbox()});
-  const now=Date.now();
-  if(typeof refreshSharedInboxCount==='function'&&now-sharedInboxCountRefreshAt>4000){sharedInboxCountRefreshAt=now;refreshSharedInboxCount()}
+  if(typeof refreshSharedInboxCount==='function')refreshSharedInboxCount();
 }
