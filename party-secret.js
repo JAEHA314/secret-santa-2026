@@ -4,7 +4,9 @@ secret=async function(){
   let party=null;
   try{party=await loadPartyState()}catch(e){console.warn('party secret state',e)}
   const allRevealed=Boolean(party&&party.reveals.length>=PEOPLE.length);
-  if(allRevealed)$('#app').style.visibility='hidden';
+  // Keep the SECRET view hidden while its async data finishes rendering so the
+  // receiver name never flashes in the default black before its character color is applied.
+  $('#app').style.visibility='hidden';
   try{
     await partySecretBase();
     try{await loadGame()}catch(e){console.warn('secret assignment color',e)}
@@ -31,5 +33,5 @@ secret=async function(){
       else page.appendChild(card);
     }
   }catch(e){console.warn('party secret giver',e)}
-  finally{if(allRevealed)$('#app').style.visibility=''}
+  finally{$('#app').style.visibility=''}
 };
