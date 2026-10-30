@@ -1,7 +1,7 @@
 // Secret inbox archive export: renders the current user's received messages into 1080x1920 PNG pages.
 (function(){
   const W=1080,H=1920,PAD=86,HEADER_H=185,TOP=245,BOTTOM=54,GAP=38;
-  const INBOX_BG='assets/inbox-bg.png?v=20261030-16';
+  const INBOX_BG='assets/inbox-bg.jpg?v=20261030-17';
   let currentMessages=[],currentReveal=false,backgroundImage=null;
   function wrapLines(ctx,text,maxWidth){const lines=[];String(text||'').split(/\n/).forEach(paragraph=>{if(!paragraph){lines.push('');return}let line='';for(const ch of paragraph){const test=line+ch;if(line&&ctx.measureText(test).width>maxWidth){lines.push(line);line=ch}else line=test}if(line)lines.push(line)});return lines}
   function messageModel(x){const sender=currentReveal?person(x.sender_id):null;return {from:sender?.name||'',body:x.message||'',date:formatMessageDate(x.created_at)}}
