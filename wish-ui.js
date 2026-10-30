@@ -1,7 +1,7 @@
 // Final wishlist routes.
 async function wish(){
   $('#app').innerHTML=shell(`<section class="route-placeholder" aria-hidden="true"></section>`);
-  try{await loadSharedSettings();await loadWishlists()}catch(e){console.warn(e)}
+  try{await Promise.all([loadSharedSettings(),loadWishlists()])}catch(e){console.warn(e)}
   $('#app').innerHTML=shell(`<section class="card wish-list-card"><div class="wish-title-row"><h2>우리의 위시리스트</h2><button id="wish-gift-limit" class="wish-gift-limit" type="button">선물 상한 <b>${Number(state.giftLimit).toLocaleString()}원</b></button></div><p class="muted wish-intro">친구를 눌러 좋아하는 것과 싫어하는 것을 확인해봐.</p><div class="wish-people">${PEOPLE.map(p=>`<button class="wish-person character-${p.id}" data-wish-person="${p.id}"><span>${visual(p,'wish-thumb')}</span><b>${p.name}</b>${p.id===state.user?'<small>나</small>':''}</button>`).join('')}</div></section>`);
   const main=$('#app .shell');if(main)main.classList.add('wish-page');bindNav();
   $('#wish-gift-limit').onclick=()=>editSharedSetting('gift');

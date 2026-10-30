@@ -21,9 +21,29 @@ function mailboxDrawLockedHtml(){
 
 async function mailboxPage(){
   $('#app').innerHTML=shell(`<div class="route-placeholder" aria-hidden="true"></div>`);
-  try{await loadGame()}catch(e){console.warn('mailbox game state',e)}
-  if(typeof partyContentUnlocked==='function'&&await partyContentUnlocked()){
-    try{const rows=await loadAllMailboxLetters();$('#app').innerHTML=shell(partyMailboxHtml(rows));const main=document.querySelector('main');if(main)main.classList.add('mailbox-page','party-mailbox-page');bindNav();if(typeof bindPartyMailboxFilters==='function')bindPartyMailboxFilters();return}catch(e){console.warn('party mailbox',e)}
+  // Game state and party-unlock state are independent reads; do them together instead
+  // of serially blocking the route transition.
+  let unlocked=false;
+  const [gameResult,unlockResult]=await Promise.allSettled([
+    loadGame(),
+    typeof partyContentUnlocked==='function'?partyContentUnlocked():Promise.resolve(false)
+  ]);
+  if(gameResult.status==='rejected')console.warn('mailbox game state',gameResult.reason);
+  if(unlockResult.status==='fulfilled')unlocked=Boolean(unlockResult.value);
+  else console.warn('mailbox party state',unlockResult.reason);
+
+  if(unlocked){
+    try{
+      // Mission labels and letters are independent and can load in parallel.
+      const results=await Promise.all([
+        typeof loadMissionDefinitions==='function'?loadMissionDefinitions():Promise.resolve(),
+        loadAllMailboxLetters()
+      ]);
+      const rows=results[1];
+      $('#app').innerHTML=shell(partyMailboxHtml(rows));
+      const main=document.querySelector('main');if(main)main.classList.add('mailbox-page','party-mailbox-page');
+      bindNav();if(typeof bindPartyMailboxFilters==='function')bindPartyMailboxFilters();return
+    }catch(e){console.warn('party mailbox',e)}
   }
   let box={total:0,mine:[]};
   try{box=await loadMailboxCounts()}catch(e){console.warn(e)}
