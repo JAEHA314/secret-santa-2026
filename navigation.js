@@ -1,15 +1,23 @@
 // Authoritative route dispatcher. Loaded after all page modules so route functions are final.
-let routeLoadingToken=0,routeLoadingTimer=null;
+let routeLoadingToken=0,routeLoadingTimer=null,routeLoadingSafetyTimer=null;
 function ensureRouteLoadingStyles(){
   if(document.getElementById('route-loading-style'))return;
   const style=document.createElement('style');
   style.id='route-loading-style';
-  style.textContent=`.route-loading{position:fixed;inset:0;z-index:9999;display:flex;align-items:center;justify-content:center;background:rgba(247,241,231,.38);backdrop-filter:blur(1.5px);-webkit-backdrop-filter:blur(1.5px);opacity:0;pointer-events:none;transition:opacity .12s ease}.route-loading.is-visible{opacity:1;pointer-events:auto}.route-loading-box{display:flex;align-items:center;gap:9px;padding:10px 14px;border:1px solid rgba(82,66,51,.12);border-radius:999px;background:rgba(255,252,247,.94);box-shadow:0 4px 16px rgba(55,42,29,.10);color:#5d554d;font-size:12px;font-weight:700}.route-loading-spinner{width:15px;height:15px;border:2px solid rgba(93,85,77,.18);border-top-color:#8f2528;border-radius:50%;animation:route-spin .7s linear infinite}@keyframes route-spin{to{transform:rotate(360deg)}}`;
+  style.textContent=`.route-loading{position:fixed;inset:0;z-index:9999;display:flex;align-items:center;justify-content:center;background:rgba(247,241,231,.38);backdrop-filter:blur(1.5px);-webkit-backdrop-filter:blur(1.5px);opacity:0;pointer-events:none;transition:opacity .1s ease}.route-loading.is-visible{opacity:1;pointer-events:auto}.route-loading-box{display:flex;align-items:center;gap:9px;padding:10px 14px;border:1px solid rgba(82,66,51,.12);border-radius:999px;background:rgba(255,252,247,.94);box-shadow:0 4px 16px rgba(55,42,29,.10);color:#5d554d;font-size:12px;font-weight:700}.route-loading-spinner{width:15px;height:15px;border:2px solid rgba(93,85,77,.18);border-top-color:#8f2528;border-radius:50%;animation:route-spin .7s linear infinite}@keyframes route-spin{to{transform:rotate(360deg)}}`;
   document.head.appendChild(style);
+}
+function hideRouteLoading(){
+  clearTimeout(routeLoadingTimer);
+  clearTimeout(routeLoadingSafetyTimer);
+  routeLoadingTimer=null;
+  routeLoadingSafetyTimer=null;
+  const el=document.getElementById('route-loading');
+  if(el)el.classList.remove('is-visible');
 }
 function beginRouteLoading(){
   const token=++routeLoadingToken;
-  clearTimeout(routeLoadingTimer);
+  hideRouteLoading();
   routeLoadingTimer=setTimeout(()=>{
     if(token!==routeLoadingToken)return;
     ensureRouteLoadingStyles();
@@ -22,16 +30,15 @@ function beginRouteLoading(){
       el.innerHTML='<div class="route-loading-box"><span class="route-loading-spinner"></span><span>불러오는 중...</span></div>';
       document.body.appendChild(el);
     }
-    requestAnimationFrame(()=>el.classList.add('is-visible'));
-  },180);
+    requestAnimationFrame(()=>{if(token===routeLoadingToken)el.classList.add('is-visible')});
+    // Never let a stalled background request leave the UI blocked indefinitely.
+    routeLoadingSafetyTimer=setTimeout(()=>{if(token===routeLoadingToken)hideRouteLoading()},4000);
+  },60);
   return token;
 }
 function endRouteLoading(token){
   if(token!==routeLoadingToken)return;
-  clearTimeout(routeLoadingTimer);
-  routeLoadingTimer=null;
-  const el=document.getElementById('route-loading');
-  if(el)el.classList.remove('is-visible');
+  hideRouteLoading();
 }
 function render(page='home'){
   if(!state.user)return login();
@@ -49,11 +56,23 @@ function render(page='home'){
     throw error;
   }
   if(result&&typeof result.then==='function'){
-    return result.finally(()=>endRouteLoading(token));
+    Promise.resolve(result).then(()=>endRouteLoading(token),()=>endRouteLoading(token));
+  }else{
+    endRouteLoading(token);
   }
-  endRouteLoading(token);
   return result;
 }
+
+// If a page has already painted useful content, do not keep an old overlay over it.
+const routeLoadingObserver=new MutationObserver(()=>{
+  const el=document.getElementById('route-loading');
+  const app=document.getElementById('app');
+  if(el?.classList.contains('is-visible')&&app&&app.children.length){
+    requestAnimationFrame(()=>hideRouteLoading());
+  }
+});
+const routeApp=document.getElementById('app');
+if(routeApp)routeLoadingObserver.observe(routeApp,{childList:true,subtree:false});
 
 // Keep browser-native click/focus behaviour. In particular, do not synthesize clicks
 // from pointerup: on iOS that can steal focus from inputs/textareas and can double-fire
