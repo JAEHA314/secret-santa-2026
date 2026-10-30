@@ -21,13 +21,25 @@ function mailboxDrawLockedHtml(){
 
 async function mailboxPage(){
   $('#app').innerHTML=shell(`<div class="route-placeholder" aria-hidden="true"></div>`);
-  try{await loadGame()}catch(e){console.warn('mailbox game state',e)}
-  if(typeof partyContentUnlocked==='function'&&await partyContentUnlocked()){
+  // Game state and party-unlock state are independent reads; do them together instead
+  // of serially blocking the route transition.
+  let unlocked=false;
+  const [gameResult,unlockResult]=await Promise.allSettled([
+    loadGame(),
+    typeof partyContentUnlocked==='function'?partyContentUnlocked():Promise.resolve(false)
+  ]);
+  if(gameResult.status==='rejected')console.warn('mailbox game state',gameResult.reason);
+  if(unlockResult.status==='fulfilled')unlocked=Boolean(unlockResult.value);
+  else console.warn('mailbox party state',unlockResult.reason);
+
+  if(unlocked){
     try{
-      // The party mailbox must resolve mission labels from the shared Supabase definitions,
-      // not from the bundled defaults. This keeps admin-edited mission text in sync.
-      if(typeof loadMissionDefinitions==='function')await loadMissionDefinitions();
-      const rows=await loadAllMailboxLetters();
+      // Mission labels and letters are independent and can load in parallel.
+      const results=await Promise.all([
+        typeof loadMissionDefinitions==='function'?loadMissionDefinitions():Promise.resolve(),
+        loadAllMailboxLetters()
+      ]);
+      const rows=results[1];
       $('#app').innerHTML=shell(partyMailboxHtml(rows));
       const main=document.querySelector('main');if(main)main.classList.add('mailbox-page','party-mailbox-page');
       bindNav();if(typeof bindPartyMailboxFilters==='function')bindPartyMailboxFilters();return
