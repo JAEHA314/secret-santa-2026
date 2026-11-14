@@ -1,0 +1,156 @@
+/* Responsive layout overrides. Loaded last, after the legacy page styles. */
+:root { --ss-nav-clearance: calc(84px + env(safe-area-inset-bottom)); }
+html, body, #app { max-width: 100%; }
+html, body { overflow-x: hidden; }
+#app > .shell { width: 100%; max-width: 480px; margin-inline: auto; }
+
+/* The navigation never falls outside the device safe area. */
+#app > .nav {
+  width: min(350px, calc(100% - 32px)) !important;
+  bottom: calc(8px + env(safe-area-inset-bottom)) !important;
+  max-width: calc(100% - 24px);
+}
+#app > .shell:has(+ .nav) { padding-bottom: var(--ss-nav-clearance) !important; }
+#app > .nav button { min-width: 0; }
+
+/* Keep the heading and account controls within narrow phone widths. */
+.shell .shared-header { min-width: 0; }
+.shell .shared-header .brand { min-width: 0; }
+.shell .shared-header .brand h1 { font-size: clamp(18px, 5vw, 25px); }
+@media (max-width: 360px) {
+  .shell .shared-header { gap: 4px; }
+  .shell .shared-user-tools { gap: 3px; }
+  .shell .shared-greeting small { font-size: 9px; }
+  .shell .shared-greeting b { font-size: 13px; }
+  .shell .shared-avatar,
+  .shell .shared-avatar .avatar-img { width: 35px; height: 35px; }
+  .shell .shared-inbox-link { min-width: 26px; }
+}
+
+/* The HOME illustration fits BOTH the width and the available height. */
+.tree-home.shell {
+  height: 100dvh;
+  min-height: 0;
+  overflow: hidden;
+  padding-top: clamp(12px, 2.5dvh, 24px) !important;
+  display: flex;
+  flex-direction: column;
+}
+.tree-home .hero {
+  width: 100%;
+  flex: 1 1 0%;
+  min-width: 0;
+  min-height: 0;
+  display: flex;
+  align-items: center !important;
+  justify-content: center;
+  overflow: hidden;
+  container-type: size;
+}
+.tree-home .hero > .shared-tree-wrap {
+  width: min(100%, 56.25cqh) !important;
+  max-width: 100% !important;
+  max-height: 100%;
+  height: auto !important;
+  aspect-ratio: 9 / 16;
+  flex: 0 0 auto;
+  margin: 0 auto !important;
+  container-type: inline-size;
+}
+
+/* Overlays scale with the ACTUAL illustration, not the laptop/phone viewport. */
+.tree-home .tree-status .tree-level {
+  font-size: clamp(7px, 2.8cqw, 11px) !important;
+  margin-bottom: clamp(4px, 3cqw, 15px) !important;
+}
+.tree-home .tree-status .tree-level b,
+.tree-home .tree-status .tree-level span { font-size: inherit !important; }
+.tree-home .tree-status > div {
+  font-size: clamp(8px, 3.4cqw, 14px) !important;
+  margin-bottom: clamp(4px, 3cqw, 13px) !important;
+}
+.tree-home .tree-status > strong {
+  font-size: clamp(16px, 9.5cqw, 38px) !important;
+  letter-spacing: -.03em;
+}
+.tree-home .tree-date-edit {
+  font-size: clamp(8px, 3.8cqw, 15px) !important;
+}
+.tree-home .tree-racer {
+  height: auto !important;
+  min-height: 0;
+  display: flex;
+  justify-content: center;
+  align-items: flex-end;
+}
+.tree-home .tree-racer img {
+  width: min(100%, 11.7cqw) !important;
+  height: auto !important;
+  aspect-ratio: 1;
+  max-width: 44px;
+  object-fit: contain;
+}
+.tree-home .tree-racer-dog img { width: min(100%, 13cqw) !important; max-width: 48px; }
+.tree-home .tree-party-menu { width: clamp(54px, 23cqw, 92px); }
+.tree-home .tree-party-actions { width: max(94px, 26cqw); max-width: 90cqw; }
+
+/* Extremely short landscape windows need scroll rather than illegibly tiny UI. */
+@media (max-height: 520px) {
+  body:has(.tree-home) { overflow-y: auto !important; }
+  .tree-home.shell {
+    height: 630px !important;
+    min-height: 630px !important;
+    overflow: visible !important;
+  }
+  /* Navigation moves below the illustration instead of covering it. */
+  #app > .tree-home + .nav {
+    position: relative !important;
+    left: auto !important;
+    bottom: auto !important;
+    transform: none !important;
+    margin: calc(-1 * var(--ss-nav-clearance) + 10px) auto 12px !important;
+  }
+}
+
+/* Content tabs: avoid cutting off inputs and cards on short displays. */
+body:has(.mailbox-page),
+body:has(.secret-page),
+body:has(.wish-page),
+body:has(.wish-detail-page),
+body:has(.board-page),
+body:has(.personal-page),
+body:has(.secret-inbox-page),
+body:has(.login-page) { overflow-y: auto !important; }
+.mailbox-page.shell,
+.secret-page.shell,
+.wish-page.shell,
+.wish-detail-page.shell,
+.board-page.shell,
+.personal-page.shell,
+.secret-inbox-page.shell,
+.login-page.shell { overflow-y: auto !important; overflow-x: hidden !important; }
+
+@media (max-height: 680px) {
+  .mailbox-page.shell,
+  .secret-page.shell,
+  .wish-page.shell,
+  .wish-detail-page.shell,
+  .board-page.shell,
+  .personal-page.shell,
+  .secret-inbox-page.shell,
+  .login-page.shell {
+    height: auto !important;
+    min-height: 100dvh !important;
+    overflow: visible !important;
+  }
+  .wish-page .wish-list-card {
+    flex: 0 0 auto !important;
+    min-height: 455px !important;
+    overflow: visible !important;
+  }
+  .wish-page .wish-people { min-height: 340px !important; }
+  .wish-detail-page .wish-detail { flex: 0 0 auto !important; overflow: visible !important; }
+  .wish-detail-page .wish-section { flex: 0 0 auto !important; min-height: 115px !important; overflow-y: auto !important; }
+  .personal-page .mission-calendar-card { min-height: 390px !important; height: auto !important; overflow: visible !important; }
+  .login-page > .card { flex: 0 0 auto !important; overflow: visible !important; }
+}
