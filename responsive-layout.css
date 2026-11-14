@@ -94,63 +94,77 @@ html, body { overflow-x: hidden; }
 .tree-home .tree-party-menu { width: clamp(54px, 23cqw, 92px); }
 .tree-home .tree-party-actions { width: max(94px, 26cqw); max-width: 90cqw; }
 
-/* Extremely short landscape windows need scroll rather than illegibly tiny UI. */
-@media (max-height: 520px) {
-  body:has(.tree-home) { overflow-y: auto !important; }
-  .tree-home.shell {
-    height: 630px !important;
-    min-height: 630px !important;
-    overflow: visible !important;
-  }
-  /* Navigation moves below the illustration instead of covering it. */
-  #app > .tree-home + .nav {
-    position: relative !important;
-    left: auto !important;
-    bottom: auto !important;
-    transform: none !important;
-    margin: calc(-1 * var(--ss-nav-clearance) + 10px) auto 12px !important;
-  }
+/* Never scroll the outer page: each route occupies one visual viewport. */
+html, body {
+  width: 100%;
+  height: 100%;
+  overflow: hidden !important;
+  overscroll-behavior: none;
+}
+body, #app {
+  width: 100%;
+  height: 100dvh;
+  max-height: 100dvh;
+  overflow: hidden !important;
+}
+#app > .shell {
+  height: 100dvh !important;
+  min-height: 0 !important;
+  max-height: 100dvh;
+  overflow: hidden !important;
+}
+/* Keep the bottom navigation fixed within the viewport on ALL devices. */
+#app > .nav {
+  position: fixed !important;
+  bottom: calc(8px + env(safe-area-inset-bottom)) !important;
 }
 
-/* Content tabs: avoid cutting off inputs and cards on short displays. */
-body:has(.mailbox-page),
-body:has(.secret-page),
-body:has(.wish-page),
-body:has(.wish-detail-page),
-body:has(.board-page),
-body:has(.personal-page),
-body:has(.secret-inbox-page),
-body:has(.login-page) { overflow-y: auto !important; }
-.mailbox-page.shell,
-.secret-page.shell,
-.wish-page.shell,
-.wish-detail-page.shell,
-.board-page.shell,
-.personal-page.shell,
-.secret-inbox-page.shell,
-.login-page.shell { overflow-y: auto !important; overflow-x: hidden !important; }
-
+/* Reduce structural whitespace before allowing any content to overlap.
+   Internal, intentionally scrollable chat and text fields retain their own behavior. */
 @media (max-height: 680px) {
-  .mailbox-page.shell,
-  .secret-page.shell,
-  .wish-page.shell,
-  .wish-detail-page.shell,
-  .board-page.shell,
-  .personal-page.shell,
-  .secret-inbox-page.shell,
-  .login-page.shell {
-    height: auto !important;
-    min-height: 100dvh !important;
-    overflow: visible !important;
+  :root { --ss-nav-clearance: calc(70px + env(safe-area-inset-bottom)); }
+  #app > .shell:not(.login-shell) { padding-top: 10px !important; }
+  #app > .shell:not(.login-shell) .shared-header {
+    height: 42px !important;
+    min-height: 42px !important;
+    flex: 0 0 42px !important;
+    margin: 2px 0 6px !important;
   }
-  .wish-page .wish-list-card {
-    flex: 0 0 auto !important;
-    min-height: 455px !important;
-    overflow: visible !important;
+  .mailbox-page .card,
+  .secret-page .card,
+  .wish-page .card {
+    margin-top: 5px !important;
+    margin-bottom: 5px !important;
+    padding-top: 12px !important;
+    padding-bottom: 12px !important;
   }
-  .wish-page .wish-people { min-height: 340px !important; }
-  .wish-detail-page .wish-detail { flex: 0 0 auto !important; overflow: visible !important; }
-  .wish-detail-page .wish-section { flex: 0 0 auto !important; min-height: 115px !important; overflow-y: auto !important; }
-  .personal-page .mission-calendar-card { min-height: 390px !important; height: auto !important; overflow: visible !important; }
-  .login-page > .card { flex: 0 0 auto !important; overflow: visible !important; }
+  .mailbox-page .compose-card textarea,
+  .secret-page .mission-note { min-height: 48px !important; height: 48px !important; }
+  .wish-page .wish-list-card { min-height: 0 !important; overflow: hidden !important; }
+  .wish-page .wish-people { min-height: 0 !important; }
+  .wish-detail-page .wish-detail { min-height: 0 !important; overflow: hidden !important; }
+  .personal-page .personal-profile-card { min-height: 0 !important; padding-block: 6px !important; }
+  .personal-page .mission-calendar-card { min-height: 0 !important; overflow: hidden !important; }
+  .login-page > .card { min-height: 0 !important; overflow: hidden !important; }
+}
+@media (max-height: 520px) {
+  :root { --ss-nav-clearance: calc(56px + env(safe-area-inset-bottom)); }
+  #app > .shell:not(.login-shell) .shared-header {
+    height: 36px !important;
+    min-height: 36px !important;
+    flex-basis: 36px !important;
+    margin: 0 0 3px !important;
+  }
+  .tree-home.shell {
+    height: 100dvh !important;
+    min-height: 0 !important;
+    overflow: hidden !important;
+  }
+  .tree-home .hero { min-height: 0 !important; }
+  #app > .nav {
+    bottom: calc(3px + env(safe-area-inset-bottom)) !important;
+    padding: 2px 5px !important;
+  }
+  #app > .nav button { padding-block: 2px !important; }
+  #app > .nav b { font-size: 13px !important; margin-bottom: 1px !important; }
 }
