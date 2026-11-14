@@ -168,3 +168,173 @@ body, #app {
   #app > .nav button { padding-block: 2px !important; }
   #app > .nav b { font-size: 13px !important; margin-bottom: 1px !important; }
 }
+
+/* ---- 2026-11-15: consistent header, inbox, profile and mood balloons ---- */
+
+/* Use the same header baseline on every logged-in route, including HOME.
+   Previously HOME's viewport-based top padding lifted it above other pages. */
+#app > .shell:has(> .shared-header) {
+  padding-top: 24px !important;
+}
+#app > .shell:has(> .shared-header) > .shared-header {
+  height: 52px !important;
+  min-height: 52px !important;
+  flex: 0 0 52px !important;
+  margin: 8px 0 12px !important;
+  padding: 0 !important;
+  align-items: center !important;
+}
+
+/* The inbox is a full-height layout. Remove the global 68px bottom
+   padding that was leaving a blank strip below the green message card. */
+#app > .secret-inbox-page.shell {
+  display: flex !important;
+  flex-direction: column !important;
+  padding-bottom: max(14px, env(safe-area-inset-bottom)) !important;
+}
+#app > .secret-inbox-page.shell > .secret-inbox-card {
+  flex: 1 1 0% !important;
+  min-height: 0 !important;
+  margin: 10px 0 0 !important;
+}
+#app > .secret-inbox-page.shell .secret-chat-scroll {
+  flex: 1 1 auto;
+  min-height: 0;
+  overflow-y: auto;
+}
+
+/* Profile: reserve room for BOTH action buttons above the bottom nav.
+   The old 356px calendar and injected 42px action margin hid the buttons. */
+#app > .personal-page.shell {
+  display: flex !important;
+  flex-direction: column !important;
+  padding-bottom: calc(82px + env(safe-area-inset-bottom)) !important;
+}
+#app > .personal-page.shell > .personal-home-back {
+  flex: 0 0 auto !important;
+  margin: 0 0 6px !important;
+}
+#app > .personal-page.shell > .personal-profile-card {
+  flex: 0 0 auto !important;
+  min-height: 0 !important;
+  margin: 2px 0 6px !important;
+  padding: 9px 14px !important;
+}
+#app > .personal-page.shell .personal-avatar {
+  height: clamp(66px, 10dvh, 86px) !important;
+}
+#app > .personal-page.shell .personal-avatar img {
+  width: clamp(76px, 12dvh, 100px) !important;
+  height: clamp(76px, 12dvh, 100px) !important;
+}
+#app > .personal-page.shell #mission-calendar-holder {
+  flex: 1 1 0% !important;
+  height: auto !important;
+  min-height: 0 !important;
+  max-height: 290px;
+  overflow: hidden !important;
+}
+#app > .personal-page.shell .mission-calendar-card {
+  height: 100% !important;
+  min-height: 0 !important;
+  margin: 0 !important;
+  padding: 8px 12px !important;
+  overflow: hidden !important;
+}
+#app > .personal-page.shell .mission-cal-grid {
+  flex: 1 1 0% !important;
+  min-height: 0 !important;
+  grid-auto-rows: minmax(0, 1fr) !important;
+  gap: 2px !important;
+}
+#app > .personal-page.shell .mission-cal-day {
+  width: clamp(22px, 4dvh, 32px) !important;
+  height: clamp(22px, 4dvh, 32px) !important;
+  min-width: 0 !important;
+  min-height: 0 !important;
+  font-size: clamp(8px, 1.7dvh, 10px) !important;
+}
+#app > .personal-page.shell > .personal-actions-row {
+  flex: 0 0 auto !important;
+  margin: 8px 0 0 !important;
+  min-height: 42px;
+}
+#app > .personal-page.shell > .personal-actions-row button {
+  min-height: 40px;
+  padding: 10px 6px !important;
+}
+
+/* Equal-height racer boxes anchor all six emoji speech bubbles on
+   exactly the same baseline, even when face images have different sizes. */
+#app .tree-home .tree-race {
+  align-items: end !important;
+}
+#app .tree-home .tree-racer {
+  height: clamp(30px, 13cqw, 48px) !important;
+  min-height: 0 !important;
+  display: flex !important;
+  align-items: flex-end !important;
+  justify-content: center !important;
+}
+#app .tree-home .tree-racer img {
+  max-height: 100% !important;
+  flex-shrink: 1;
+}
+#app .tree-home .tree-mood-popup {
+  top: auto !important;
+  bottom: calc(100% + 4px) !important;
+  height: 38px !important;
+  box-sizing: border-box !important;
+  display: grid !important;
+  place-items: center !important;
+  line-height: 1 !important;
+}
+
+@media (max-height: 680px) {
+  #app > .shell:has(> .shared-header) {
+    padding-top: 10px !important;
+  }
+  #app > .shell:has(> .shared-header) > .shared-header {
+    height: 42px !important;
+    min-height: 42px !important;
+    flex-basis: 42px !important;
+    margin: 2px 0 6px !important;
+  }
+  #app > .personal-page.shell {
+    padding-bottom: calc(70px + env(safe-area-inset-bottom)) !important;
+  }
+  #app > .personal-page.shell > .personal-profile-card {
+    padding: 6px 12px !important;
+    margin-bottom: 4px !important;
+  }
+  #app > .personal-page.shell #mission-calendar-holder {
+    max-height: 250px;
+  }
+  #app > .personal-page.shell > .personal-actions-row {
+    margin-top: 5px !important;
+  }
+}
+@media (max-height: 520px) {
+  #app > .shell:has(> .shared-header) > .shared-header {
+    height: 36px !important;
+    min-height: 36px !important;
+    flex-basis: 36px !important;
+    margin: 0 0 3px !important;
+  }
+  #app > .personal-page.shell {
+    padding-bottom: calc(56px + env(safe-area-inset-bottom)) !important;
+  }
+  #app > .personal-page.shell .personal-avatar {
+    height: 50px !important;
+  }
+  #app > .personal-page.shell .personal-avatar img {
+    width: 64px !important;
+    height: 64px !important;
+  }
+  #app > .personal-page.shell > .personal-profile-card h2 {
+    margin: 3px 0 0 !important;
+  }
+  #app > .personal-page.shell #mission-calendar-holder {
+    max-height: 210px;
+  }
+}
